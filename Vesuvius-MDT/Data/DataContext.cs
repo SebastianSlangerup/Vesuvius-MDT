@@ -5,11 +5,18 @@ namespace Vesuvius_MDT.Data;
 
 public class DataContext : DbContext
 {
+    private IConfiguration _configuration;
+    
+    public DataContext(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+    
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseSqlServer(
-            "Server=10.130.54.46;Database=vesuvius_test;User Id=Vesuvius;Password=Admin2023;TrustServerCertificate=True;"
-            );
+            _configuration["Db:ConnectionString"]
+        );
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
