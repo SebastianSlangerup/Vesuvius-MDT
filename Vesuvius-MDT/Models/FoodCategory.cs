@@ -2,7 +2,7 @@ namespace Vesuvius_MDT.Models;
 
 public class FoodCategory
 {
-    public int Id { get; set; }
+    public int FoodCategoryId { get; set; }
 
     public string Name { get; set; }
 

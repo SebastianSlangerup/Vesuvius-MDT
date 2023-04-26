@@ -1,6 +1,6 @@
 ﻿namespace Vesuvius_MDT.Models;
 
-public class EmployeeTypes
+public class EmployeeType
 {
     public int EmployeeTypeId { get; set; }
     
