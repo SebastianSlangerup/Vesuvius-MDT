@@ -9,11 +9,9 @@ public class OrderItem
     public int OrderId { get; set; }
     public Order Order { get; set; } 
     
-    public int MenuItemId { get; set; }
-    public MenuItem MenuItem { get; set; }
+    public int? MenuItemId { get; set; }
+    public MenuItem? MenuItem { get; set; }
 
-    public AddonLink AddonLink { get; set; }
-    
     public int FoodStatusId { get; set; }
     public FoodStatus FoodStatus { get; set; }
     
@@ -24,4 +22,6 @@ public class OrderItem
     
     [Column(TypeName = "decimal(18, 2)")]
     public decimal Discount { get; set; }
+    
+    public List<AddonLink>? AddonLinks { get; set; }
 }

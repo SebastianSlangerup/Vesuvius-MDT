@@ -20,5 +20,5 @@ public class MenuItem
 
     public bool InStock { get; set; }
 
-    public List<OrderItem> OrderItems { get; set; }
+    public List<OrderItem>? OrderItems { get; set; }
 }

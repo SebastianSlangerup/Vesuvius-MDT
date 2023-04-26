@@ -9,8 +9,8 @@ public class Employee
     [Column(TypeName = "nvarchar(50)")]
     public string EmployeeName { get; set; }
     
-    public int EmployeeTypeId { get; set; }
-    public EmployeeType EmployeeType { get; set; }
+    public int? EmployeeTypeId { get; set; }
+    public EmployeeType? EmployeeType { get; set; }
     
     public int PhoneNumber { get; set; }
     
