@@ -237,7 +237,7 @@ namespace Vesuvius_MDT.Migrations
                     b.Property<int>("OrderStatusId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ReservationId")
+                    b.Property<int?>("ReservationId")
                         .HasColumnType("int");
 
                     b.Property<int>("ServerId")
@@ -327,7 +327,10 @@ namespace Vesuvius_MDT.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReservationId"));
 
-                    b.Property<int>("CustomerId")
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CustomerRefId")
                         .HasColumnType("int");
 
                     b.Property<string>("Extra")
@@ -349,6 +352,8 @@ namespace Vesuvius_MDT.Migrations
                     b.HasKey("ReservationId");
 
                     b.HasIndex("CustomerId");
+
+                    b.HasIndex("CustomerRefId");
 
                     b.HasIndex("TableId");
 
@@ -433,8 +438,7 @@ namespace Vesuvius_MDT.Migrations
                     b.HasOne("Vesuvius_MDT.Models.Reservation", "Reservation")
                         .WithMany()
                         .HasForeignKey("ReservationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Vesuvius_MDT.Models.Employee", "Server")
                         .WithMany("Orders")
@@ -488,10 +492,14 @@ namespace Vesuvius_MDT.Migrations
 
             modelBuilder.Entity("Vesuvius_MDT.Models.Reservation", b =>
                 {
-                    b.HasOne("Vesuvius_MDT.Models.Customer", "Customer")
+                    b.HasOne("Vesuvius_MDT.Models.Customer", null)
                         .WithMany("Reservations")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("CustomerId");
+
+                    b.HasOne("Vesuvius_MDT.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerRefId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Vesuvius_MDT.Models.Table", "Table")

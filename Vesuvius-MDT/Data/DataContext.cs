@@ -12,6 +12,19 @@ public class DataContext : DbContext
             );
     }
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Order>()
+            .HasOne(e => e.Reservation)
+            .WithMany()
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<Reservation>()
+            .HasOne(e => e.Customer)
+            .WithMany()
+            .OnDelete(DeleteBehavior.NoAction);
+    }
+
     public DbSet<Addon> Addons { get; set; }
     public DbSet<AddonLink> AddonLinks { get; set; }
     public DbSet<Customer> Customers { get; set; }

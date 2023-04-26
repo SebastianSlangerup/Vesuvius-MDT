@@ -15,8 +15,8 @@ public class Order
     public int ServerId { get; set; }
     public Employee Server { get; set; }
     
-    public int ReservationId { get; set; }
-    public Reservation Reservation { get; set; }
+    public int? ReservationId { get; set; }
+    public Reservation? Reservation { get; set; }
     
     [Column(TypeName = "decimal(18, 2)")]
     public decimal Tips { get; set; }

@@ -201,8 +201,9 @@ namespace Vesuvius_MDT.Migrations
                     ReservationDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ResevationStart = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ResevationEnd = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CustomerId = table.Column<int>(type: "int", nullable: false),
-                    Extra = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    CustomerRefId = table.Column<int>(type: "int", nullable: false),
+                    Extra = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CustomerId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -211,8 +212,12 @@ namespace Vesuvius_MDT.Migrations
                         name: "FK_Reservations_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
-                        principalColumn: "CustomerId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "CustomerId");
+                    table.ForeignKey(
+                        name: "FK_Reservations_Customers_CustomerRefId",
+                        column: x => x.CustomerRefId,
+                        principalTable: "Customers",
+                        principalColumn: "CustomerId");
                     table.ForeignKey(
                         name: "FK_Reservations_Tables_TableId",
                         column: x => x.TableId,
@@ -230,7 +235,7 @@ namespace Vesuvius_MDT.Migrations
                     OrderStatusId = table.Column<int>(type: "int", nullable: false),
                     CustomerId = table.Column<int>(type: "int", nullable: false),
                     ServerId = table.Column<int>(type: "int", nullable: false),
-                    ReservationId = table.Column<int>(type: "int", nullable: false),
+                    ReservationId = table.Column<int>(type: "int", nullable: true),
                     Tips = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
@@ -258,8 +263,7 @@ namespace Vesuvius_MDT.Migrations
                         name: "FK_Orders_Reservations_ReservationId",
                         column: x => x.ReservationId,
                         principalTable: "Reservations",
-                        principalColumn: "ReservationId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ReservationId");
                 });
 
             migrationBuilder.CreateTable(
@@ -370,6 +374,11 @@ namespace Vesuvius_MDT.Migrations
                 name: "IX_Reservations_CustomerId",
                 table: "Reservations",
                 column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reservations_CustomerRefId",
+                table: "Reservations",
+                column: "CustomerRefId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reservations_TableId",

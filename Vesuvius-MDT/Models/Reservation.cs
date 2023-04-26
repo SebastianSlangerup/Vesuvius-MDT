@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Vesuvius_MDT.Models;
 
 public class Reservation
@@ -13,7 +15,8 @@ public class Reservation
 
     public DateTime ResevationEnd { get; set; }
 
-    public int CustomerId { get; set; }
+    [ForeignKey("Customer")]
+    public int CustomerRefId { get; set; }
     public Customer Customer { get; set; }
 
     public string Extra { get; set; }
