@@ -2,7 +2,7 @@ namespace Vesuvius_MDT.Models;
 
 public class Reservation
 {
-    public int ResevationId { get; set; }
+    public int ReservationId { get; set; }
 
     public int TableId { get; set; }
     public Table Table { get; set; }

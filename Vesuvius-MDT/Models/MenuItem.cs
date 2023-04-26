@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Vesuvius_MDT.Models;
 
 public class MenuItem
@@ -8,6 +10,7 @@ public class MenuItem
 
     public string Description { get; set; }
 
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal Price { get; set; }
 
     public int FoodCategoryId { get; set; }

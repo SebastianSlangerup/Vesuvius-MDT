@@ -1,4 +1,6 @@
-﻿namespace Vesuvius_MDT.Models;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Vesuvius_MDT.Models;
 
 public class OrderItem
 {
@@ -18,7 +20,9 @@ public class OrderItem
     
     public int Count { get; set; }
     
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal Paid { get; set; }
     
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal Discount { get; set; }
 }

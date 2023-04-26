@@ -1,4 +1,6 @@
-﻿namespace Vesuvius_MDT.Models;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Vesuvius_MDT.Models;
 
 public class Order
 {
@@ -16,6 +18,7 @@ public class Order
     public int ReservationId { get; set; }
     public Reservation Reservation { get; set; }
     
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal Tips { get; set; }
 
     public List<OrderItem> OrderItems { get; set; }
