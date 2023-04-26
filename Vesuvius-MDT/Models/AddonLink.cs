@@ -9,4 +9,7 @@ public class AddonLink
 
     public int AddonId { get; set; }
     public Addon Addon { get; set; }
+    
+    public List<OrderItem> OrderItems { get; set; }
+
 }

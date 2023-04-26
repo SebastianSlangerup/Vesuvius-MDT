@@ -11,4 +11,7 @@ public class Customer
     public string Email { get; set; }
     
     public List<Reservation> Reservations { get; set; }
+    
+    public List<Order> Orders { get; set; }
+
 }

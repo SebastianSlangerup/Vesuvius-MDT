@@ -13,4 +13,6 @@ public class MenuItem
     public FoodCategory FoodCategory { get; set; }
 
     public bool InStock { get; set; }
+
+    public List<OrderItem> OrderItems { get; set; }
 }

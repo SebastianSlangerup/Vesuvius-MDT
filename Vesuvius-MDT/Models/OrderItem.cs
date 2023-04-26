@@ -1,6 +1,6 @@
 ﻿namespace Vesuvius_MDT.Models;
 
-public class OrderItems
+public class OrderItem
 {
     public int OrderItemId { get; set; }
     public int OrderId { get; set; }

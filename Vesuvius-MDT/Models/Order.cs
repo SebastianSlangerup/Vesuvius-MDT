@@ -1,6 +1,6 @@
 ﻿namespace Vesuvius_MDT.Models;
 
-public class Orders
+public class Order
 {
     public int OrderId { get; set; }
     public int OrderStatusId { get; set; }
@@ -8,4 +8,7 @@ public class Orders
     public int Server { get; set; }
     public int ReservationId { get; set; }
     public float Tips { get; set; }
+
+    public List<Reservation> Reservations { get; set; }
+    public List<OrderItem> OrderItems { get; set; }
 }
