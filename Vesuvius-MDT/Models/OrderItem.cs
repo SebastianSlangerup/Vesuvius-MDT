@@ -12,7 +12,6 @@ public class OrderItem
     public int MenuItemId { get; set; }
     public MenuItem MenuItem { get; set; }
 
-    public int AddonLinkId { get; set; }
     public AddonLink AddonLink { get; set; }
     
     public int FoodStatusId { get; set; }

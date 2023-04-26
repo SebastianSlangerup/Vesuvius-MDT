@@ -19,5 +19,6 @@ public class Reservation
     public int CustomerRefId { get; set; }
     public Customer Customer { get; set; }
 
+    [Column(TypeName = "nvarchar(255)")]
     public string Extra { get; set; }
 }
