@@ -21,7 +21,7 @@ public class OrderItem
     public decimal Paid { get; set; }
     
     [Column(TypeName = "decimal(18, 2)")]
-    public decimal Discount { get; set; }
+    public decimal? Discount { get; set; }
     
     public List<AddonLink>? AddonLinks { get; set; }
 }

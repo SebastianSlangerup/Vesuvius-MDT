@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Vesuvius_MDT.Data;
 
@@ -11,9 +12,11 @@ using Vesuvius_MDT.Data;
 namespace Vesuvius_MDT.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230428085033_AddedSeedData")]
+    partial class AddedSeedData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -108,22 +111,6 @@ namespace Vesuvius_MDT.Migrations
                     b.HasKey("CustomerId");
 
                     b.ToTable("Customers");
-
-                    b.HasData(
-                        new
-                        {
-                            CustomerId = 1,
-                            Email = "marsmanden1@gmail.com",
-                            Name = "Sebastian Møller",
-                            PhoneNumber = "4528994940"
-                        },
-                        new
-                        {
-                            CustomerId = 2,
-                            Email = "mart377i@gmail.com",
-                            Name = "Martin Egeskov",
-                            PhoneNumber = "4511223344"
-                        });
                 });
 
             modelBuilder.Entity("Vesuvius_MDT.Models.Employee", b =>
@@ -158,17 +145,6 @@ namespace Vesuvius_MDT.Migrations
                     b.HasIndex("LoginId");
 
                     b.ToTable("Employees");
-
-                    b.HasData(
-                        new
-                        {
-                            EmployeeId = 1,
-                            EmailAdress = "marsmanden1@gmail.com",
-                            EmployeeName = "Sebastian Møller",
-                            EmployeeTypeId = 1,
-                            LoginId = 1,
-                            PhoneNumber = 28994940
-                        });
                 });
 
             modelBuilder.Entity("Vesuvius_MDT.Models.EmployeeType", b =>
@@ -186,18 +162,6 @@ namespace Vesuvius_MDT.Migrations
                     b.HasKey("EmployeeTypeId");
 
                     b.ToTable("EmployeeTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            EmployeeTypeId = 1,
-                            Type = "Manager"
-                        },
-                        new
-                        {
-                            EmployeeTypeId = 2,
-                            Type = "Chef"
-                        });
                 });
 
             modelBuilder.Entity("Vesuvius_MDT.Models.FoodCategory", b =>
@@ -282,14 +246,6 @@ namespace Vesuvius_MDT.Migrations
                     b.HasKey("LoginId");
 
                     b.ToTable("Logins");
-
-                    b.HasData(
-                        new
-                        {
-                            LoginId = 1,
-                            Password = "Admin2023",
-                            Username = "TestUser"
-                        });
                 });
 
             modelBuilder.Entity("Vesuvius_MDT.Models.MenuItem", b =>
@@ -328,7 +284,7 @@ namespace Vesuvius_MDT.Migrations
                         {
                             MenuItemId = 1,
                             Description = "Bøf af hakket oksekød i briochebolle med salat, pickles, tomat, syltede rødløg og burgerdressing.",
-                            FoodCategoryId = 2,
+                            FoodCategoryId = 1,
                             InStock = true,
                             Name = "Vesuvius Burger",
                             Price = 139m
@@ -369,17 +325,6 @@ namespace Vesuvius_MDT.Migrations
                     b.HasIndex("ServerId");
 
                     b.ToTable("Orders");
-
-                    b.HasData(
-                        new
-                        {
-                            OrderId = 1,
-                            CustomerId = 1,
-                            OrderStatusId = 1,
-                            ReservationId = 1,
-                            ServerId = 1,
-                            Tips = 2.50m
-                        });
                 });
 
             modelBuilder.Entity("Vesuvius_MDT.Models.OrderItem", b =>
@@ -393,7 +338,7 @@ namespace Vesuvius_MDT.Migrations
                     b.Property<int>("Count")
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("Discount")
+                    b.Property<decimal>("Discount")
                         .HasColumnType("decimal(18, 2)");
 
                     b.Property<int>("FoodStatusId")
@@ -417,17 +362,6 @@ namespace Vesuvius_MDT.Migrations
                     b.HasIndex("OrderId");
 
                     b.ToTable("OrderItems");
-
-                    b.HasData(
-                        new
-                        {
-                            OrderItemId = 1,
-                            Count = 2,
-                            FoodStatusId = 1,
-                            MenuItemId = 1,
-                            OrderId = 1,
-                            Paid = 140.99m
-                        });
                 });
 
             modelBuilder.Entity("Vesuvius_MDT.Models.OrderStatus", b =>
@@ -445,18 +379,6 @@ namespace Vesuvius_MDT.Migrations
                     b.HasKey("OrderStatusId");
 
                     b.ToTable("OrderStatuses");
-
-                    b.HasData(
-                        new
-                        {
-                            OrderStatusId = 1,
-                            Status = "In Progress"
-                        },
-                        new
-                        {
-                            OrderStatusId = 2,
-                            Status = "Done"
-                        });
                 });
 
             modelBuilder.Entity("Vesuvius_MDT.Models.Reservation", b =>
@@ -498,18 +420,6 @@ namespace Vesuvius_MDT.Migrations
                     b.HasIndex("TableId");
 
                     b.ToTable("Reservations");
-
-                    b.HasData(
-                        new
-                        {
-                            ReservationId = 1,
-                            CustomerRefId = 1,
-                            Extra = "Plads til handikap, tak :)",
-                            ReservationDateTime = new DateTime(2023, 4, 28, 11, 30, 51, 651, DateTimeKind.Local).AddTicks(3160),
-                            ResevationEnd = new DateTime(2023, 4, 28, 16, 30, 51, 651, DateTimeKind.Local).AddTicks(3210),
-                            ResevationStart = new DateTime(2023, 4, 28, 12, 30, 51, 651, DateTimeKind.Local).AddTicks(3200),
-                            TableId = 1
-                        });
                 });
 
             modelBuilder.Entity("Vesuvius_MDT.Models.Table", b =>
@@ -530,20 +440,6 @@ namespace Vesuvius_MDT.Migrations
                     b.HasKey("TableId");
 
                     b.ToTable("Tables");
-
-                    b.HasData(
-                        new
-                        {
-                            TableId = 1,
-                            Location = "Zone 3",
-                            TableSize = 2
-                        },
-                        new
-                        {
-                            TableId = 2,
-                            Location = "Zone 3",
-                            TableSize = 4
-                        });
                 });
 
             modelBuilder.Entity("Vesuvius_MDT.Models.AddonLink", b =>
