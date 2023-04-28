@@ -2,12 +2,11 @@
 using Vesuvius_MDT.Models;
 using Vesuvius_MDT.Repository;
 
-namespace Vesuvius_MDT.UnitOfWork;
+namespace Vesuvius_MDT.UnitOfWorkNamespace;
 
 public class UnitOfWork : IDisposable
 {
     private readonly DataContext _context;
-    
     
     private GenericRepository<Order>? _orderRepository;
     private GenericRepository<Addon>? _addonRepository;
