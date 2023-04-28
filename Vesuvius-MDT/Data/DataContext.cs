@@ -21,6 +21,7 @@ public class DataContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // ON DELETE NO ACTION
         modelBuilder.Entity<Order>()
             .HasOne(e => e.Reservation)
             .WithMany()
@@ -30,6 +31,31 @@ public class DataContext : DbContext
             .HasOne(e => e.Customer)
             .WithMany()
             .OnDelete(DeleteBehavior.NoAction);
+        
+        // SEEDING 
+        modelBuilder.Entity<Addon>().HasData(
+            new Addon { Name = "Pepperoni", Price = 9.99m },
+            new Addon { Name = "Salad", Price = 5.00m },
+            new Addon { Name = "Cheese", Price = 6.00m}
+        );
+        modelBuilder.Entity<FoodStatus>().HasData(
+            new FoodStatus { Status = "Available"},
+            new FoodStatus { Status = "In progress"},
+            new FoodStatus { Status = "Done"}
+        );
+        modelBuilder.Entity<FoodCategory>().HasData(
+            new FoodCategory { Name = "Breakfast"},
+            new FoodCategory { Name = "Dinner"}
+        );
+        modelBuilder.Entity<MenuItem>().HasData(
+            new MenuItem
+            {
+                Name = "Vesuvius Burger",
+                Description = "Bøf af hakket oksekød i briochebolle med salat, pickles, tomat, syltede rødløg og burgerdressing.",
+                Price = 139,
+                
+            }
+        );
     }
 
     public DbSet<Addon> Addons { get; set; }
