@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Data;
+using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Mvc;
 using Vesuvius_MDT.Data;
 using Vesuvius_MDT.Models;
@@ -24,4 +25,17 @@ public class AddonController : Controller
         return Ok(addons);
     }
 
+    [HttpPost("/addons/new")]
+    public ActionResult<Addon> Create(Addon addon)
+    {
+        try
+        {
+            _unitOfWork.AddonRepository.Add(addon);
+            return Ok(addon);
+        }
+        catch (DataException e)
+        {
+            return BadRequest(e);
+        }
+    }
 }
