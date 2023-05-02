@@ -1,4 +1,3 @@
-﻿using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Mvc;
 using Vesuvius_MDT.Data;
 using Vesuvius_MDT.Models;
@@ -7,21 +6,20 @@ using Vesuvius_MDT.UnitOfWorkNamespace;
 namespace Vesuvius_MDT.Controllers;
 
 [ApiController]
-public class AddonController : Controller
+public class TableController : Controller
 {
     private readonly UnitOfWork _unitOfWork;
 
-    public AddonController(DataContext context)
+    public TableController(DataContext context)
     {
         _unitOfWork = new UnitOfWork(context);
     }
 
-    [HttpGet("/addons")]
-    public ActionResult<List<Addon>> All()
+    [HttpGet("/tables")]
+    public ActionResult<List<Table>> All()
     {
-        var addons = _unitOfWork.AddonRepository.GetAll();
+        var tables = _unitOfWork.TableRepository.GetAll();
         
-        return Ok(addons);
+        return Ok(tables);
     }
-
 }
