@@ -9,7 +9,7 @@ namespace Vesuvius_MDT.Controllers;
 [Route("[controller]")]
 public class OrderController : Controller
 {
-    private UnitOfWork _unitOfWork;
+    private readonly UnitOfWork _unitOfWork;
 
     public OrderController(DataContext context)
     {
