@@ -9,7 +9,12 @@ namespace Vesuvius_MDT.Controllers;
 [ApiController]
 public class AddonController : Controller
 {
-    private UnitOfWork _unitOfWork = new UnitOfWork();
+    private UnitOfWork _unitOfWork;
+
+    public AddonController(DataContext context)
+    {
+        _unitOfWork = new UnitOfWork(context);
+    }
 
     [HttpGet("/addons")]
     public ActionResult<List<Addon>> All()

@@ -1,4 +1,5 @@
-﻿using Vesuvius_MDT.Data;
+﻿using Microsoft.AspNetCore.Mvc;
+using Vesuvius_MDT.Data;
 using Vesuvius_MDT.Models;
 using Vesuvius_MDT.Repository;
 
@@ -7,7 +8,11 @@ namespace Vesuvius_MDT.UnitOfWorkNamespace;
 public class UnitOfWork : IDisposable
 {
     private readonly DataContext _context;
-    
+    public UnitOfWork(DataContext context)
+    {
+        this._context = context;
+    }
+
     private GenericRepository<Order>? _orderRepository;
     private GenericRepository<Addon>? _addonRepository;
     private GenericRepository<AddonLink>? _addonLinkRepository;
@@ -47,6 +52,8 @@ public class UnitOfWork : IDisposable
     }
 
     private bool disposed = false;
+
+
 
     protected virtual void Dispose(bool disposing)
     {
