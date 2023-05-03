@@ -1,3 +1,4 @@
+using System.Data;
 using Microsoft.AspNetCore.Mvc;
 using Vesuvius_MDT.Data;
 using Vesuvius_MDT.Models;
@@ -30,6 +31,7 @@ public class OrderController : Controller
 
         if (order is not null)
         {
+            _unitOfWork.Save();
             return Ok(order);
         }
         return NotFound();
@@ -38,7 +40,67 @@ public class OrderController : Controller
     [HttpPost("/order/new")]
     public ActionResult<Order> Add(Order order)
     {
-        _unitOfWork.OrderRepository.Add(order);
-        return Ok(order);
+        try
+        {
+            _unitOfWork.OrderRepository.Add(order);
+            _unitOfWork.Save();
+            return Ok(order);
+        }
+        catch (DataException e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    [HttpPut("/order/{id:int}")]
+    public ActionResult<Order> Update(int id, Order orderRequest)
+    {
+        var order = _unitOfWork.OrderRepository.GetById(id);
+        
+        if (order is null)
+        {
+            return NotFound();
+        }
+        
+        try
+        {
+            order.OrderStatusId = orderRequest.OrderStatusId;
+            order.ReservationId = orderRequest.ReservationId;
+            order.ServerId = orderRequest.ServerId;
+            order.CustomerId = orderRequest.CustomerId;
+            
+            _unitOfWork.Save();
+
+            return Ok(order);
+        }
+        catch (DataException e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    [HttpDelete("/order/{id:int}")]
+    public ActionResult Delete(int id)
+    {
+        var order = _unitOfWork.OrderRepository.GetById(id);
+
+        if (order is null)
+        {
+            return NotFound();
+        }
+
+        try
+        {
+            _unitOfWork.OrderRepository.Remove(order);
+            _unitOfWork.Save();
+            return Ok();
+        }
+        catch (DataException e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
     }
 }
