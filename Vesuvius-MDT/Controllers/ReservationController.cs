@@ -1,3 +1,4 @@
+using System.Data;
 using Microsoft.AspNetCore.Mvc;
 using Vesuvius_MDT.Data;
 using Vesuvius_MDT.Models;
@@ -21,5 +22,80 @@ public class ReservationController : Controller
         var reservations = _unitOfWork.ReservationRepository.GetAll();
         
         return Ok(reservations);
+    }
+    
+    [HttpGet("/reservation/{id:int}")]
+    public ActionResult<Reservation> Get(int id)
+    {
+        var reservation = _unitOfWork.ReservationRepository.GetById(id);
+
+        if (reservation is null) return NotFound();
+        
+        _unitOfWork.Save();
+        return Ok(reservation);
+    }
+
+    [HttpPost("/reservation/new")]
+    public ActionResult<Reservation> Add(Reservation reservation)
+    {
+        try
+        {
+            _unitOfWork.ReservationRepository.Add(reservation);
+            _unitOfWork.Save();
+            return Ok(reservation);
+        }
+        catch (DataException e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    [HttpPut("/reservation/{id:int}")]
+    public ActionResult<Reservation> Update(int id, Reservation reservationRequest)
+    {
+        var reservation = _unitOfWork.ReservationRepository.GetById(id);
+        
+        if (reservation is null) return NotFound();
+
+        try
+        {
+            reservation.TableId = reservationRequest.TableId;
+            reservation.CustomerRefId = reservationRequest.CustomerRefId;
+            reservation.Extra = reservationRequest.Extra;
+            reservation.ResevationStart = reservationRequest.ResevationStart;
+            reservation.ResevationEnd = reservationRequest.ResevationEnd;
+            reservation.ReservationDateTime = reservationRequest.ReservationDateTime;
+
+            _unitOfWork.Save();
+
+            return Ok(reservation);
+        }
+        catch (DataException e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    [HttpDelete("/reservation/{id:int}")]
+    public ActionResult Delete(int id)
+    {
+        var reservation = _unitOfWork.ReservationRepository.GetById(id);
+
+        if (reservation is null) return NotFound();
+
+        try
+        {
+            _unitOfWork.ReservationRepository.Remove(reservation);
+            _unitOfWork.Save();
+            
+            return Ok();
+        }
+        catch (DataException e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
     }
 }

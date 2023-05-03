@@ -1,3 +1,4 @@
+using System.Data;
 using Microsoft.AspNetCore.Mvc;
 using Vesuvius_MDT.Data;
 using Vesuvius_MDT.Models;
@@ -21,5 +22,55 @@ public class LoginController : Controller
         var logins = _unitOfWork.LoginRepository.GetAll();
         
         return Ok(logins);
+    }
+    
+    [HttpGet("/login/{id:int}")]
+    public ActionResult<Login> Get(int id)
+    {
+        var login = _unitOfWork.LoginRepository.GetById(id);
+
+        if (login is null) return NotFound();
+        
+        _unitOfWork.Save();
+        return Ok(login);
+    }
+
+    [HttpPost("/login/new")]
+    public ActionResult<Login> Add(Login login)
+    {
+        try
+        {
+            _unitOfWork.LoginRepository.Add(login);
+            _unitOfWork.Save();
+            return Ok(login);
+        }
+        catch (DataException e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    [HttpPut("/login/{id:int}")]
+    public ActionResult<Login> Update(int id, Login loginRequest)
+    {
+        var login = _unitOfWork.LoginRepository.GetById(id);
+        
+        if (login is null) return NotFound();
+
+        try
+        {
+            login.Username = loginRequest.Username;
+            login.Password = loginRequest.Password;
+
+            _unitOfWork.Save();
+
+            return Ok(login);
+        }
+        catch (DataException e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
     }
 }

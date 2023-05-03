@@ -27,14 +27,12 @@ public class OrderController : Controller
     [HttpGet("/order/{id:int}")]
     public ActionResult<Order> Get(int id)
     {
-        Order? order = _unitOfWork.OrderRepository.GetById(id);
+        var order = _unitOfWork.OrderRepository.GetById(id);
 
-        if (order is not null)
-        {
-            _unitOfWork.Save();
-            return Ok(order);
-        }
-        return NotFound();
+        if (order is null) return NotFound();
+        
+        _unitOfWork.Save();
+        return Ok(order);
     }
 
     [HttpPost("/order/new")]
@@ -58,11 +56,8 @@ public class OrderController : Controller
     {
         var order = _unitOfWork.OrderRepository.GetById(id);
         
-        if (order is null)
-        {
-            return NotFound();
-        }
-        
+        if (order is null) return NotFound();
+
         try
         {
             order.OrderStatusId = orderRequest.OrderStatusId;
@@ -86,10 +81,7 @@ public class OrderController : Controller
     {
         var order = _unitOfWork.OrderRepository.GetById(id);
 
-        if (order is null)
-        {
-            return NotFound();
-        }
+        if (order is null) return NotFound();
 
         try
         {

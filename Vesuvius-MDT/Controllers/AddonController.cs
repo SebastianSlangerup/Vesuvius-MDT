@@ -25,17 +25,74 @@ public class AddonController : Controller
         return Ok(addons);
     }
 
-    [HttpPost("/addons/new")]
-    public ActionResult<Addon> Create(Addon addon)
+    [HttpGet("/addon/{id:int}")]
+    public ActionResult<Addon> Get(int id)
+    {
+        var addon = _unitOfWork.AddonRepository.GetById(id);
+
+        if (addon is null) return NotFound();
+        
+        _unitOfWork.Save();
+        return Ok(addon);
+    }
+
+    [HttpPost("/addon/new")]
+    public ActionResult<Addon> Add(Addon addon)
     {
         try
         {
             _unitOfWork.AddonRepository.Add(addon);
+            _unitOfWork.Save();
             return Ok(addon);
         }
         catch (DataException e)
         {
-            return BadRequest(e);
+            Console.WriteLine(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    [HttpPut("/addon/{id:int}")]
+    public ActionResult<Addon> Update(int id, Addon addonRequest)
+    {
+        var addon = _unitOfWork.AddonRepository.GetById(id);
+        
+        if (addon is null) return NotFound();
+
+        try
+        {
+            addon.Name = addonRequest.Name;
+            addon.Price = addonRequest.Price;
+
+            _unitOfWork.Save();
+
+            return Ok(addon);
+        }
+        catch (DataException e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    [HttpDelete("/addon/{id:int}")]
+    public ActionResult Delete(int id)
+    {
+        var addon = _unitOfWork.AddonRepository.GetById(id);
+
+        if (addon is null) return NotFound();
+
+        try
+        {
+            _unitOfWork.AddonRepository.Remove(addon);
+            _unitOfWork.Save();
+            
+            return Ok();
+        }
+        catch (DataException e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
 }

@@ -1,3 +1,4 @@
+using System.Data;
 using Microsoft.AspNetCore.Mvc;
 using Vesuvius_MDT.Data;
 using Vesuvius_MDT.Models;
@@ -21,5 +22,54 @@ public class FoodCategoryController : Controller
         var foodCategories = _unitOfWork.FoodCategoryRepository.GetAll();
         
         return Ok(foodCategories);
+    }
+    
+    [HttpGet("/food-category/{id:int}")]
+    public ActionResult<FoodCategory> Get(int id)
+    {
+        var foodCategory = _unitOfWork.FoodCategoryRepository.GetById(id);
+
+        if (foodCategory is null) return NotFound();
+        
+        _unitOfWork.Save();
+        return Ok(foodCategory);
+    }
+
+    [HttpPost("/food-category/new")]
+    public ActionResult<FoodCategory> Add(FoodCategory foodCategory)
+    {
+        try
+        {
+            _unitOfWork.FoodCategoryRepository.Add(foodCategory);
+            _unitOfWork.Save();
+            return Ok(foodCategory);
+        }
+        catch (DataException e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    [HttpPut("/food-category/{id:int}")]
+    public ActionResult<FoodCategory> Update(int id, FoodCategory foodCategoryRequest)
+    {
+        var foodCategory = _unitOfWork.FoodCategoryRepository.GetById(id);
+        
+        if (foodCategory is null) return NotFound();
+
+        try
+        {
+            foodCategory.Name = foodCategoryRequest.Name;
+
+            _unitOfWork.Save();
+
+            return Ok(foodCategory);
+        }
+        catch (DataException e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
     }
 }

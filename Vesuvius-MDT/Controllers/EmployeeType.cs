@@ -1,3 +1,4 @@
+using System.Data;
 using Microsoft.AspNetCore.Mvc;
 using Vesuvius_MDT.Data;
 using Vesuvius_MDT.Models;
@@ -21,5 +22,54 @@ public class EmployeeTypeController : Controller
         var employeeTypes = _unitOfWork.EmployeeTypeRepository.GetAll();
         
         return Ok(employeeTypes);
+    }
+    
+    [HttpGet("/employee-type/{id:int}")]
+    public ActionResult<EmployeeType> Get(int id)
+    {
+        var employeeType = _unitOfWork.EmployeeTypeRepository.GetById(id);
+
+        if (employeeType is null) return NotFound();
+        
+        _unitOfWork.Save();
+        return Ok(employeeType);
+    }
+
+    [HttpPost("/employee-type/new")]
+    public ActionResult<EmployeeType> Add(EmployeeType employeeType)
+    {
+        try
+        {
+            _unitOfWork.EmployeeTypeRepository.Add(employeeType);
+            _unitOfWork.Save();
+            return Ok(employeeType);
+        }
+        catch (DataException e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    [HttpPut("/employee-type/{id:int}")]
+    public ActionResult<EmployeeType> Update(int id, EmployeeType employeeTypeRequest)
+    {
+        var employeeType = _unitOfWork.EmployeeTypeRepository.GetById(id);
+        
+        if (employeeType is null) return NotFound();
+
+        try
+        {
+            employeeType.Type = employeeTypeRequest.Type;
+
+            _unitOfWork.Save();
+
+            return Ok(employeeType);
+        }
+        catch (DataException e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
     }
 }
