@@ -72,4 +72,26 @@ public class EmployeeTypeController : Controller
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
+    
+    [HttpDelete("/employee-type/delete/{id:int}")]
+    public ActionResult Delete(int id)
+    {
+        var employeeType = _unitOfWork.EmployeeTypeRepository.GetById(id);
+        if (employeeType == null)
+        {
+            return NotFound();
+        }
+
+        try
+        {
+            _unitOfWork.EmployeeTypeRepository.Remove(employeeType);
+            _unitOfWork.Save();
+            return Ok();
+        }
+        catch (DataException e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
 }

@@ -74,4 +74,27 @@ public class CustomerController : Controller
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
+    
+    [HttpDelete("/customer/delete/{id:int}")]
+    public ActionResult Delete(int id)
+    {
+        var customer = _unitOfWork.CustomerRepository.GetById(id);
+        if (customer == null)
+        {
+            return NotFound();
+        }
+
+        try
+        {
+            _unitOfWork.CustomerRepository.Remove(customer);
+            _unitOfWork.Save();
+            return Ok();
+        }
+        catch (DataException e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+    
 }

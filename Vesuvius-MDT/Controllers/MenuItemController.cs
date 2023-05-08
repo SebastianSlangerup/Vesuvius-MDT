@@ -55,7 +55,7 @@ public class MenuItemController : Controller
         }
     }
 
-    [HttpPut("/menu-item/{id:int}")]
+    [HttpPut("/menu-item/update/{id:int}")]
     public ActionResult<MenuItem> Update(int id, MenuItem menuItemRequest)
     {
         MenuItem menuItem = _unitOfWork.MenuItemRepository.GetById(id);
@@ -84,7 +84,7 @@ public class MenuItemController : Controller
         }
     }
 
-    [HttpDelete("/menu-item/{id:int}")]
+    [HttpDelete("/menu-item/delete/{id:int}")]
     public ActionResult Delete(int id)
     {
         var menu_item = _unitOfWork.MenuItemRepository.GetById(id);

@@ -72,4 +72,26 @@ public class FoodStatusController : Controller
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
+    
+    [HttpDelete("/food-status/delete/{id:int}")]
+    public ActionResult Delete(int id)
+    {
+        var foodStatus = _unitOfWork.FoodStatusRepository.GetById(id);
+        if (foodStatus == null)
+        {
+            return NotFound();
+        }
+
+        try
+        {
+            _unitOfWork.FoodStatusRepository.Remove(foodStatus);
+            _unitOfWork.Save();
+            return Ok();
+        }
+        catch (DataException e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
 }
