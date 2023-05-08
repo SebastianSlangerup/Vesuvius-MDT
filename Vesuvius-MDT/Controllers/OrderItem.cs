@@ -24,7 +24,7 @@ public class OrderItemController : Controller
         return Ok(orderItems);
     }
 
-    [HttpGet("order-items")]
+    [HttpPost("order-items/add")]
     public ActionResult<OrderItem> Add(OrderItem orderItem)
     {
         try
@@ -38,6 +38,17 @@ public class OrderItemController : Controller
             Console.WriteLine(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
+    }
+    
+    [HttpGet("/order-item/{id:int}")]
+    public ActionResult<OrderItem> Get(int id)
+    {
+        var order_item = _unitOfWork.OrderItemRepository.GetById(id);
+
+        if (order_item is null) return NotFound();
+        
+        _unitOfWork.Save();
+        return Ok(order_item);
     }
 
     [HttpPut("/order-item/update/{id:int}")]

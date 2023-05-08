@@ -51,7 +51,7 @@ public class LoginController : Controller
         }
     }
 
-    [HttpPut("/login/update{id:int}")]
+    [HttpPut("/login/update/{id:int}")]
     public ActionResult<Login> Update(int id, Login loginRequest)
     {
         var login = _unitOfWork.LoginRepository.GetById(id);

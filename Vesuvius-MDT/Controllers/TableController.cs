@@ -51,7 +51,7 @@ public class TableController : Controller
         }
     }
 
-    [HttpPut("/table/delete{id:int}")]
+    [HttpPut("/table/delete/{id:int}")]
     public ActionResult<Table> Update(int id, Table tableRequest)
     {
         var table = _unitOfWork.TableRepository.GetById(id);

@@ -74,7 +74,7 @@ public class AddonLinkController : Controller
         }
     }
 
-    [HttpDelete("/addon/delete/{id:int}")]
+    [HttpDelete("/addon-link/delete/{id:int}")]
     public ActionResult Delete(int id)
     {
         var addon = _unitOfWork.AddonRepository.GetById(id);
