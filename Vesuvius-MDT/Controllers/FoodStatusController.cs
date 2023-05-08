@@ -51,7 +51,7 @@ public class FoodStatusController : Controller
         }
     }
 
-    [HttpPut("/food-status/{id:int}")]
+    [HttpPut("/food-status/update/{id:int}")]
     public ActionResult<FoodStatus> Update(int id, FoodStatus foodStatusRequest)
     {
         var foodStatus = _unitOfWork.FoodStatusRepository.GetById(id);

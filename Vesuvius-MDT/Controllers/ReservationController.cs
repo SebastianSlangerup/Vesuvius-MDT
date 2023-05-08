@@ -51,7 +51,7 @@ public class ReservationController : Controller
         }
     }
 
-    [HttpPut("/reservation/{id:int}")]
+    [HttpPut("/reservation/update/{id:int}")]
     public ActionResult<Reservation> Update(int id, Reservation reservationRequest)
     {
         var reservation = _unitOfWork.ReservationRepository.GetById(id);
@@ -78,7 +78,7 @@ public class ReservationController : Controller
         }
     }
 
-    [HttpDelete("/reservation/{id:int}")]
+    [HttpDelete("/reservation/delete/{id:int}")]
     public ActionResult Delete(int id)
     {
         var reservation = _unitOfWork.ReservationRepository.GetById(id);

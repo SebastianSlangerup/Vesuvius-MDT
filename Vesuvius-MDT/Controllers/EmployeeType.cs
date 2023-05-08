@@ -51,7 +51,7 @@ public class EmployeeTypeController : Controller
         }
     }
 
-    [HttpPut("/employee-type/{id:int}")]
+    [HttpPut("/employee-type/update/{id:int}")]
     public ActionResult<EmployeeType> Update(int id, EmployeeType employeeTypeRequest)
     {
         var employeeType = _unitOfWork.EmployeeTypeRepository.GetById(id);

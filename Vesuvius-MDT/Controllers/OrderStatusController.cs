@@ -51,7 +51,7 @@ public class OrderStatusController : Controller
         }
     }
 
-    [HttpPut("/order-status/{id:int}")]
+    [HttpPut("/order-status/update/{id:int}")]
     public ActionResult<OrderStatus> Update(int id, OrderStatus orderStatusRequest)
     {
         var orderStatus = _unitOfWork.OrderStatusRepository.GetById(id);
@@ -73,7 +73,7 @@ public class OrderStatusController : Controller
         }
     }
 
-    [HttpDelete("/order-status/{id:int}")]
+    [HttpDelete("/order-status/delete/{id:int}")]
     public ActionResult Delete(int id)
     {
         var orderStatus = _unitOfWork.OrderStatusRepository.GetById(id);

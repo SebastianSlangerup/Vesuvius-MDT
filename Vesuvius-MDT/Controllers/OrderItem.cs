@@ -40,7 +40,7 @@ public class OrderItemController : Controller
         }
     }
 
-    [HttpPut("/order-item/{id:int}")]
+    [HttpPut("/order-item/update/{id:int}")]
     public ActionResult<OrderItem> Update(int id, OrderItem orderRequestItem)
     {
         var Order_item = _unitOfWork.OrderItemRepository.GetById(id);
@@ -71,7 +71,7 @@ public class OrderItemController : Controller
         }
     }
 
-    [HttpDelete("/order-item/{id:int}")]
+    [HttpDelete("/order-item/delete/{id:int}")]
     public ActionResult Delete(int id)
     {
         var order_item = _unitOfWork.OrderItemRepository.GetById(id);

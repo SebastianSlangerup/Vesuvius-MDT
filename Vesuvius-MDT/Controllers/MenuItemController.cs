@@ -24,7 +24,7 @@ public class MenuItemController : Controller
         return Ok(menuItems);
     }
 
-    [HttpGet("menu-item/{id:int}]")]
+    [HttpGet("menu-item/{id:int}")]
     public ActionResult<MenuItem> Get(int id)
     {
         MenuItem menuItem = _unitOfWork.MenuItemRepository.GetById(id);

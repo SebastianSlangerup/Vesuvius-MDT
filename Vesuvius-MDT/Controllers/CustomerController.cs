@@ -51,7 +51,7 @@ public class CustomerController : Controller
         }
     }
 
-    [HttpPut("/customer/{id:int}")]
+    [HttpPut("/customer/update/{id:int}")]
     public ActionResult<Customer> Update(int id, Customer customerRequest)
     {
         var customer = _unitOfWork.CustomerRepository.GetById(id);

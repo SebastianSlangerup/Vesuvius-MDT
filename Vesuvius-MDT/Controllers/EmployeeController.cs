@@ -51,7 +51,7 @@ public class EmployeeController : Controller
         }
     }
 
-    [HttpPut("/employee/{id:int}")]
+    [HttpPut("/employee/update/{id:int}")]
     public ActionResult<Employee> Update(int id, Employee employeeRequest)
     {
         var employee = _unitOfWork.EmployeeRepository.GetById(id);

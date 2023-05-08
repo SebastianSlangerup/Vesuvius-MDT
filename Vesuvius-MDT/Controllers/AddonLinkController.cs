@@ -51,7 +51,7 @@ public class AddonLinkController : Controller
         }
     }
 
-    [HttpPut("/addon-link/{id:int}")]
+    [HttpPut("/addon-link/update/{id:int}")]
     public ActionResult<AddonLink> Update(int id, AddonLink addonLinkRequest)
     {
         var addonLink = _unitOfWork.AddonLinkRepository.GetById(id);
@@ -74,7 +74,7 @@ public class AddonLinkController : Controller
         }
     }
 
-    [HttpDelete("/addon/{id:int}")]
+    [HttpDelete("/addon/delete/{id:int}")]
     public ActionResult Delete(int id)
     {
         var addon = _unitOfWork.AddonRepository.GetById(id);
