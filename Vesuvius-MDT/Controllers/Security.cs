@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
@@ -25,10 +26,11 @@ public class Security : Controller
     {
         if (login.Username == username && login.Password == password)
         {
-            var issuer = _configuration["Jwt:Issuer"];
-            var audience = _configuration["Jwt:Audience"];
+            string issuer = _configuration["Jwt:Issuer"] ?? throw new SecurityException("The Issuer key set in appsetting.json is invalid");
+            string audience = _configuration["Jwt:Audience"] ?? throw new SecurityException("The audience key set in appsetting.json is invalid");
             var key = Encoding.ASCII.GetBytes
-                (_configuration["Jwt:Key"]);
+            (_configuration["Jwt:Key"] ?? throw new SecurityException("The key set in appsetting.json is invalid"));
+            
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
@@ -62,7 +64,7 @@ public class Security : Controller
         var validationParameters = new TokenValidationParameters()
         {
             IssuerSigningKey = new SymmetricSecurityKey
-                (Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])),
+                (Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? throw new SecurityException("The key set in appsetting.json is invalid"))),
             ValidAudience = _configuration["Jwt:Audience"],
             ValidIssuer = _configuration["Jwt:Issuer"],
             ValidateLifetime = true,
@@ -82,11 +84,13 @@ public class Security : Controller
         }
         catch(SecurityTokenException)
         {
+            StatusCode(StatusCodes.Status401Unauthorized);
             return false; 
         }
         catch(Exception e)
         { 
             Console.WriteLine(e.ToString()); //something else happened
+            StatusCode(StatusCodes.Status500InternalServerError);
             throw;
         }
         //... manual validations return false if anything untoward is discovered
