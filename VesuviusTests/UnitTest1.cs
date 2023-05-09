@@ -1,21 +1,23 @@
 using Microsoft.AspNetCore.Mvc;
 using Vesuvius_MDT.Data;
-using Vesuvius_MDT.UnitOfWorkNamespace;
+using Moq;
 
-namespace UnitTests;
+namespace VesuviusTests;
 
-
-public class UnitOfWorkTest : Controller
+[TestClass]
+public class UnitOfWorkTest
 {
     private readonly UnitOfWork _unitOfWork;
+    
+
     
     public UnitOfWorkTest(DataContext context)
     {
         _unitOfWork = new UnitOfWork(context);
     }
     
-    [Test]
-    public void UnitOfWork()
+    [TestMethod]
+    public void TestUnitOfWork()
     {
         int id = 1;
         var orderTestModel = _unitOfWork.OrderTestRepository.GetById(id);
@@ -26,7 +28,13 @@ public class UnitOfWorkTest : Controller
         }
         
         _unitOfWork.Save();
-       Assert.True(true);
+        Assert.IsTrue(true);
+    }
+
+    [TestMethod]
+    public void test2()
+    {
+        Assert.IsTrue(true);
     }
 }
 
@@ -64,7 +72,8 @@ class UnitOfWork
     //Dependency Injection
     public UnitOfWork(DataContext context)
     {
-        _context = context;
+        var mockContext = new Mock<DataContext>();
+        _context = mockContext;
     }
     
     private OrderRepositoryTest<OrderTestModel>? _orderTestModel;
