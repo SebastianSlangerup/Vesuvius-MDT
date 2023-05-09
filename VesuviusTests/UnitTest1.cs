@@ -8,10 +8,8 @@ namespace VesuviusTests;
 public class UnitOfWorkTest
 {
     private readonly UnitOfWork _unitOfWork;
-    
 
-    
-    public UnitOfWorkTest(DataContext context)
+    public UnitOfWorkTest(Mock<DataContext> context)
     {
         _unitOfWork = new UnitOfWork(context);
     }
@@ -27,7 +25,6 @@ public class UnitOfWorkTest
             Assert.Fail();
         }
         
-        _unitOfWork.Save();
         Assert.IsTrue(true);
     }
 
@@ -45,17 +42,17 @@ interface IOrderRepositoryTest <TEntity> where TEntity : class
 
 class OrderRepositoryTest <T> : IOrderRepositoryTest<T> where T : class
 {
-    internal readonly DataContext _context;
+    internal readonly Mock<DataContext> _context;
     
     //Dependency Injection
-    public OrderRepositoryTest(DataContext context)
+    public OrderRepositoryTest(Mock<DataContext> context)
     {
         _context = context;
     }
         
     public T? GetById(int id)
     {
-        return _context.Set<T>().Find(id);
+        return (T?) _context.SetupGet(p => p.Set<T>().Find(id));
     }
 }
 
@@ -67,20 +64,15 @@ class OrderTestModel
 class UnitOfWork
 {
     
-    internal readonly DataContext _context;
+    internal readonly Mock<DataContext> _context;
     
     //Dependency Injection
-    public UnitOfWork(DataContext context)
+    public UnitOfWork(Mock<DataContext> context)
     {
-        var mockContext = new Mock<DataContext>();
-        _context = mockContext;
+        _context = context;
     }
     
     private OrderRepositoryTest<OrderTestModel>? _orderTestModel;
     public OrderRepositoryTest<OrderTestModel> OrderTestRepository => _orderTestModel ??= new OrderRepositoryTest<OrderTestModel>(_context);
     
-    public void Save()
-    {
-        _context.SaveChanges();
-    }
 }
