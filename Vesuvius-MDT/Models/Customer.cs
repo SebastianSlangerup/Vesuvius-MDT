@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Vesuvius_MDT.Models;
 
@@ -15,8 +16,10 @@ public class Customer
     [Column(TypeName = "nvarchar(50)")]
     public string Email { get; set; }
     
+    [JsonIgnore]
     public List<Reservation> Reservations { get; set; }
     
+    [JsonIgnore]
     public List<Order> Orders { get; set; }
 
 }

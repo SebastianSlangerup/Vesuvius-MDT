@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Vesuvius_MDT.Models;
 
@@ -12,5 +13,6 @@ public class Addon
     [Column(TypeName = "decimal(18, 2)")]
     public decimal Price { get; set; }
 
+    [JsonIgnore]
     public List<AddonLink> AddonLinks { get; set; }
 }
