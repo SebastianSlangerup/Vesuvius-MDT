@@ -1,5 +1,6 @@
 using System.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Vesuvius_MDT.Data;
 using Vesuvius_MDT.Models;
 using Vesuvius_MDT.UnitOfWorkNamespace;
@@ -35,6 +36,55 @@ public class ReservationController : Controller
         return Ok(reservation);
     }
 
+    [HttpGet("/reservations/active")]
+    public ActionResult<List<Reservation>> GetActives()
+    {
+        var reservations = 
+            _unitOfWork.ReservationRepository.Find(reservation => reservation.ResevationEnd < DateTime.Now);
+
+        if (reservations.Any() == false) return NotFound();
+
+        return Ok(reservations);
+    }
+
+    [HttpGet("/reservations/customer/{customerId:int}")]
+    public ActionResult<List<Reservation>> GetCustomerReservations(int customerId)
+    {
+        var reservations =
+            _unitOfWork.ReservationRepository.Find(reservation => reservation.CustomerRefId == customerId);
+
+        if (reservations.Any() == false) return NotFound();
+
+        return Ok(reservations);
+    }
+
+    [HttpGet("/reservations/1-month-ahead")]
+    public ActionResult<List<Reservation>> GetReservationsAMonthAhead()
+    {
+        var oneMonthAhead = DateTime.Now.AddMonths(1);
+        var tables = _unitOfWork.TableRepository.GetAll();
+        var reservations = _unitOfWork.ReservationRepository.Find(
+            r => r.ResevationStart > oneMonthAhead
+            || r.ResevationEnd < oneMonthAhead);
+        
+        Dictionary<DateTime, Table> availableTables = 
+
+        if (tables == null) return NotFound();
+
+        return Ok(tables);
+    }
+    
+    // [HttpGet("/reservations/customer/{date:datetime}")]
+    // public ActionResult<List<Reservation>> GetReservationForCurrentDate(DateTime date)
+    // {
+    //     var reservations =
+    //         _unitOfWork.ReservationRepository.Find(reservation => reservation.CustomerRefId == customerId);
+
+    //     if (reservations.Any() == false) return NotFound();
+
+    //     return Ok(reservations);
+    // }
+    
     [HttpPost("/reservation/new")]
     public ActionResult<Reservation> Add(Reservation reservation)
     {

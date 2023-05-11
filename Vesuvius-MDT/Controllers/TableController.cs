@@ -35,6 +35,16 @@ public class TableController : Controller
         return Ok(table);
     }
 
+    [HttpGet("/tables/available")]
+    public ActionResult<List<Table>> GetAvailable()
+    {
+        var tables = _unitOfWork.TableRepository.Find(table => table.Reservations.Any() == false);
+
+        if (tables.Any() == false) return NotFound();
+
+        return Ok(tables);
+    }
+
     [HttpPost("/table/new")]
     public ActionResult<Table> Add(Table table)
     {

@@ -24,10 +24,10 @@ public class MenuItemController : Controller
         return Ok(menuItems);
     }
 
-    [HttpGet("menu-item/{id:int}")]
+    [HttpGet("/menu-item/{id:int}")]
     public ActionResult<MenuItem> Get(int id)
     {
-        MenuItem menuItem = _unitOfWork.MenuItemRepository.GetById(id);
+        var menuItem = _unitOfWork.MenuItemRepository.GetById(id);
 
         if (menuItem == null)
         {
@@ -36,7 +36,16 @@ public class MenuItemController : Controller
         
         _unitOfWork.Save();
         return Ok(menuItem);
+    }
 
+    [HttpGet("/menu-item/in-stock")]
+    public ActionResult<List<MenuItem>> GetInStock()
+    {
+        var menuItems = _unitOfWork.MenuItemRepository.Find(mi => mi.InStock == true);
+
+        if (menuItems.Any() == false) return NotFound();
+
+        return Ok(menuItems);
     }
 
     [HttpPost("/menu-item/new")]

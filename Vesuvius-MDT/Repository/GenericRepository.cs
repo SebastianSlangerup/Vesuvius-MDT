@@ -1,4 +1,7 @@
-﻿using System.Linq.Expressions;
+﻿using System.Collections;
+using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Vesuvius_MDT.Data;
 using Vesuvius_MDT.IRepository;
 
@@ -42,5 +45,9 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     public void RemoveRange(IEnumerable<T> entities)
     {
         _context.Set<T>().RemoveRange(entities);
+    }
+    public IIncludableQueryable<T, IEnumerable> Include(Expression<Func<T, IEnumerable>> expression)
+    {
+        return _context.Set<T>().Include(expression);
     }
 }
