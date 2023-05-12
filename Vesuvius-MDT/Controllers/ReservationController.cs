@@ -63,13 +63,23 @@ public class ReservationController : Controller
     {
         var oneMonthAhead = DateTime.Now.AddMonths(1);
         var tables = _unitOfWork.TableRepository.GetAll();
-        var reservations = _unitOfWork.ReservationRepository.Find(
-            r => r.ResevationStart > oneMonthAhead
-            || r.ResevationEnd < oneMonthAhead);
-        
-        Dictionary<DateTime, Table> availableTables = 
+        var reservations = _unitOfWork.ReservationRepository.GetAll();
 
-        if (tables == null) return NotFound();
+        var timeSpans = new List<TimeSpan>
+        {
+            new(00, 0, 0),
+            new(02, 0, 0),
+            new(04, 0, 0),
+            new(06, 0, 0),
+            new(08, 0, 0),
+            new(10, 0, 0),
+            new(12, 0, 0),
+            new(14, 0, 0),
+            new(16, 0, 0),
+            new(18, 0, 0),
+            new(20, 0, 0),
+            new(22, 0, 0),
+        };
 
         return Ok(tables);
     }
