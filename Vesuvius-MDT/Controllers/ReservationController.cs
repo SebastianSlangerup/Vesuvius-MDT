@@ -61,7 +61,7 @@ public class ReservationController : Controller
     public ActionResult<List<Reservation>> GetReservationsAMonthAhead(int intervals, int intervalLength)
     {
         Calender cl = new Calender(intervals, intervalLength);
-        Dictionary<Day, List<Interval>> availableDays = cl.GetAvailableDays(cl.Days);
+        var availableDays = cl.GetAvailableDays(cl.Days);
 
         if (availableDays.Count <= 0)
         {

@@ -1,4 +1,6 @@
-﻿namespace Vesuvius_MDT.Models;
+﻿using System.Collections.ObjectModel;
+
+namespace Vesuvius_MDT.Models;
 
 public class Calender
 {
@@ -11,26 +13,36 @@ public class Calender
         {
             Days.Add(new Day(DateTime.Now + TimeSpan.FromDays(i),intervals,intervalLength));
         }
-
-      
     }
     
-    public Dictionary<Day,List<Interval>> GetAvailableDays(List<Day> days)
+    public List<Dictionary<Dictionary<int, Day>, List<Interval>>> GetAvailableDays(List<Day> _days)
     {
-        Dictionary<Day, List<Interval>> availableDays = new Dictionary<Day, List<Interval>>();
+
+        List<Day> days = new List<Day>();
         List<Interval> intervals = new List<Interval>();
+
+        int i = 1;
         foreach (var day in days)
         {
             foreach (var interval in day.Intervals)
             {
-                if (interval.ReservationId == null)
+                if (interval.ReservationId == 0 || interval.ReservationId == null)
                 {
                     interval.availabe = true;
                     intervals.Add(interval);
-                    availableDays.Add(day, intervals);
-                    continue;
+
+                    availableDays.Add(dict);
+                    Console.WriteLine("+1");
                 }
-                interval.availabe = false;
+                else
+                {
+                    
+                    interval.availabe = false;
+                    Console.WriteLine("-1");
+                    Console.WriteLine(interval.ReservationId);
+                }
+
+                i++;
             }
         }
 
