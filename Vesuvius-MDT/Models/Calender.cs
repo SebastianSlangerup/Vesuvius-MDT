@@ -6,42 +6,30 @@ public class Calender
 {
     public List<Day> Days;
 
-    public Calender(int intervals, int intervalLength)
+    public Calender(int intervals, int intervalLength, IEnumerable<Reservation> reservations)
     {
         Days = new List<Day>();
         for (int i = 0; i < DateTime.DaysInMonth(DateTime.Today.Year,DateTime.Today.Month); i++)
         {
-            Days.Add(new Day(DateTime.Now + TimeSpan.FromDays(i),intervals,intervalLength));
+            Days.Add(new Day(DateTime.Now + TimeSpan.FromDays(i),intervals,intervalLength,reservations));
         }
     }
     
-    public List<Dictionary<Dictionary<int, Day>, List<Interval>>> GetAvailableDays(List<Day> _days)
+    public dynamic GetAvailableDays(List<Day> _days)
     {
 
         List<Day> days = new List<Day>();
         List<Interval> intervals = new List<Interval>();
 
+        var availableDays = new List<dynamic>(); 
+
         int i = 1;
-        foreach (var day in days)
+        foreach (var day in Days)
         {
             foreach (var interval in day.Intervals)
             {
-                if (interval.ReservationId == 0 || interval.ReservationId == null)
-                {
-                    interval.availabe = true;
-                    intervals.Add(interval);
-
-                    availableDays.Add(dict);
-                    Console.WriteLine("+1");
-                }
-                else
-                {
-                    
-                    interval.availabe = false;
-                    Console.WriteLine("-1");
-                    Console.WriteLine(interval.ReservationId);
-                }
-
+                availableDays.Add(day);
+                availableDays.Add(interval);
                 i++;
             }
         }

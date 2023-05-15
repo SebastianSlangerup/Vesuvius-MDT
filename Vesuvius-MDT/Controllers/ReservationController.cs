@@ -60,15 +60,9 @@ public class ReservationController : Controller
     [HttpGet("/reservations/1-month-ahead")]
     public ActionResult<List<Reservation>> GetReservationsAMonthAhead(int intervals, int intervalLength)
     {
-        Calender cl = new Calender(intervals, intervalLength);
+        var res = _unitOfWork.ReservationRepository.GetAll();
+        Calender cl = new Calender(intervals, intervalLength,res);
         var availableDays = cl.GetAvailableDays(cl.Days);
-
-        if (availableDays.Count <= 0)
-        {
-            return StatusCode(StatusCodes.Status204NoContent);
-        }
-        
-        Console.WriteLine(availableDays.Count);
         
         return Ok(availableDays);
     }
