@@ -1,6 +1,5 @@
 using System.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Vesuvius_MDT.Data;
 using Vesuvius_MDT.Models;
 using Vesuvius_MDT.UnitOfWorkNamespace;
@@ -59,25 +58,20 @@ public class ReservationController : Controller
     }
 
     [HttpGet("/reservations/1-month-ahead")]
-    public ActionResult<List<Reservation>> GetReservationsAMonthAhead(int intevals,int inteval_len)
+    public ActionResult<List<Reservation>> GetReservationsAMonthAhead(int intervals, int intervalLength)
     {
+        Calender cl = new Calender(intervals, intervalLength);
+        Dictionary<Day, List<Interval>> availableDays = cl.GetAvailableDays(cl.Days);
 
-        Calender cl = new Calender(intevals, inteval_len);
-
-        Dictionary<Day, List<Interval>> avaviable_days = cl.get_available(cl.Days);
-
-        if (avaviable_days.Count <= 0)
+        if (availableDays.Count <= 0)
         {
             return StatusCode(StatusCodes.Status204NoContent);
         }
         
-        Console.WriteLine(avaviable_days.Count);
+        Console.WriteLine(availableDays.Count);
         
-        return Ok(avaviable_days);
+        return Ok(availableDays);
     }
-
-
-
     
     // [HttpGet("/reservations/customer/{date:datetime}")]
     // public ActionResult<List<Reservation>> GetReservationForCurrentDate(DateTime date)

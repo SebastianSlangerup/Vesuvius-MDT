@@ -1,43 +1,39 @@
-﻿using Vesuvius_MDT.Controllers;
-
-namespace Vesuvius_MDT.Models;
+﻿namespace Vesuvius_MDT.Models;
 
 public class Calender
 {
     public List<Day> Days;
 
-    public Calender(int intervals,int inteval_len)
+    public Calender(int intervals, int intervalLength)
     {
         Days = new List<Day>();
         for (int i = 0; i < DateTime.DaysInMonth(DateTime.Today.Year,DateTime.Today.Month); i++)
         {
-            Days.Add(new Day(DateTime.Now + TimeSpan.FromDays(i),intervals,inteval_len));
+            Days.Add(new Day(DateTime.Now + TimeSpan.FromDays(i),intervals,intervalLength));
         }
 
       
     }
     
-    public Dictionary<Day,List<Interval>> get_available(List<Day> _days)
+    public Dictionary<Day,List<Interval>> GetAvailableDays(List<Day> days)
     {
-        Dictionary<Day, List<Interval>> avaviable_days = new Dictionary<Day, List<Interval>>();
-        List<Interval> Intervals = new List<Interval>();
-        foreach (var day in _days)
+        Dictionary<Day, List<Interval>> availableDays = new Dictionary<Day, List<Interval>>();
+        List<Interval> intervals = new List<Interval>();
+        foreach (var day in days)
         {
             foreach (var interval in day.Intervals)
             {
                 if (interval.ReservationId == null)
                 {
                     interval.availabe = true;
-                    Intervals.Add(interval);
-                    avaviable_days.Add(day, Intervals);
+                    intervals.Add(interval);
+                    availableDays.Add(day, intervals);
                     continue;
                 }
                 interval.availabe = false;
-
-                continue;
             }
         }
 
-        return avaviable_days;
+        return availableDays;
     }
 }
