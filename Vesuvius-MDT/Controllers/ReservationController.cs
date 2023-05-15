@@ -65,6 +65,13 @@ public class ReservationController : Controller
         Calender cl = new Calender(intevals, inteval_len);
 
         Dictionary<Day, List<Interval>> avaviable_days = cl.get_available(cl.Days);
+
+        if (avaviable_days.Count <= 0)
+        {
+            return StatusCode(StatusCodes.Status204NoContent);
+        }
+        
+        Console.WriteLine(avaviable_days.Count);
         
         return Ok(avaviable_days);
     }
