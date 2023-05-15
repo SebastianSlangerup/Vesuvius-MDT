@@ -59,30 +59,18 @@ public class ReservationController : Controller
     }
 
     [HttpGet("/reservations/1-month-ahead")]
-    public ActionResult<List<Reservation>> GetReservationsAMonthAhead()
+    public ActionResult<List<Reservation>> GetReservationsAMonthAhead(int intevals,int inteval_len)
     {
-        var oneMonthAhead = DateTime.Now.AddMonths(1);
-        var tables = _unitOfWork.TableRepository.GetAll();
-        var reservations = _unitOfWork.ReservationRepository.GetAll();
 
-        var timeSpans = new List<TimeSpan>
-        {
-            new(00, 0, 0),
-            new(02, 0, 0),
-            new(04, 0, 0),
-            new(06, 0, 0),
-            new(08, 0, 0),
-            new(10, 0, 0),
-            new(12, 0, 0),
-            new(14, 0, 0),
-            new(16, 0, 0),
-            new(18, 0, 0),
-            new(20, 0, 0),
-            new(22, 0, 0),
-        };
+        Calender cl = new Calender(intevals, inteval_len);
 
-        return Ok(tables);
+        Dictionary<Day, List<Interval>> avaviable_days = cl.get_available(cl.Days);
+        
+        return Ok(avaviable_days);
     }
+
+
+
     
     // [HttpGet("/reservations/customer/{date:datetime}")]
     // public ActionResult<List<Reservation>> GetReservationForCurrentDate(DateTime date)
