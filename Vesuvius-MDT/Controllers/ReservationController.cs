@@ -57,16 +57,6 @@ public class ReservationController : Controller
         return Ok(reservations);
     }
 
-    [HttpGet("/reservations/1-month-ahead")]
-    public ActionResult<List<Reservation>> GetReservationsAMonthAhead(int intervals, int intervalLength)
-    {
-        var res = _unitOfWork.ReservationRepository.GetAll();
-        Calender cl = new Calender(intervals, intervalLength,res);
-        var availableDays = cl.GetAvailableDays(cl.Days);
-        
-        return Ok(availableDays);
-    }
-    
     // [HttpGet("/reservations/customer/{date:datetime}")]
     // public ActionResult<List<Reservation>> GetReservationForCurrentDate(DateTime date)
     // {
