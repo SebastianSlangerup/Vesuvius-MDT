@@ -2,6 +2,7 @@ using System.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Vesuvius_MDT.Data;
+using Vesuvius_MDT.Dtos;
 using Vesuvius_MDT.Models;
 using Vesuvius_MDT.UnitOfWorkNamespace;
 
@@ -11,9 +12,11 @@ namespace Vesuvius_MDT.Controllers;
 public class ReservationController : Controller
 {
     private readonly UnitOfWork _unitOfWork;
+    private readonly IConfiguration _configuration;
 
-    public ReservationController(DataContext context)
+    public ReservationController(DataContext context, IConfiguration configuration)
     {
+        _configuration = configuration;
         _unitOfWork = new UnitOfWork(context);
     }
 
@@ -70,24 +73,26 @@ public class ReservationController : Controller
     // }
     
     [HttpPost("/reservation/new")]
-    public ActionResult<Reservation> Add(Reservation reservation)
+    public ActionResult<Reservation> Add(ReservationDto reservation)
     {
         try
         {
-            
-            var ID = new SqlParameter($"ID", $"{reservation.ReservationId}");
-            var TableId = new SqlParameter($"ID", $"{reservation.TableId}");
-            var Date = new SqlParameter($"ID", $"{reservation.ReservationDateTime}");
-            var Start = new SqlParameter($"ID", $"{reservation.ResevationStart}");
-            var End = new SqlParameter($"ID", $"{reservation.ResevationEnd}");
-            var Customer = new SqlParameter($"ID", $"{reservation.CustomerRefId}");
-
-
-
-            _unitOfWork.ReservationRepository.dbsetFromSQL($"exec createResevation @{ID} ,");
-            _unitOfWork.ReservationRepository.GetById(reservation.ReservationId);
-            _unitOfWork.Save();
-            return Ok(reservation);
+            var connectionString = _configuration["Db:ConnectionString"];
+            using (var sqlConnection = new SqlConnection(connectionString))
+            {
+                sqlConnection.Open();
+                SqlCommand sqlCommand = new SqlCommand("relationalInsertIntoReservations", sqlConnection);
+                sqlCommand.CommandType = CommandType.StoredProcedure;
+                sqlCommand.Parameters.AddWithValue("@TableId", SqlDbType.Int).Value = reservation.TableId;
+                sqlCommand.Parameters.AddWithValue("@ReservationDateTime", SqlDbType.DateTime).Value = reservation.ReservationDateTime;
+                sqlCommand.Parameters.AddWithValue("@ResevationStart", SqlDbType.DateTime).Value = reservation.ResevationStart;
+                sqlCommand.Parameters.AddWithValue("@ResevationEnd", SqlDbType.DateTime).Value = reservation.ResevationEnd;
+                sqlCommand.Parameters.AddWithValue("@CustomerRefId", SqlDbType.Int).Value = reservation.CustomerRefId;
+                sqlCommand.Parameters.AddWithValue("@Extra", SqlDbType.NVarChar).Value = reservation.Extra;
+                sqlCommand.ExecuteNonQuery();
+                sqlConnection.Close();
+            }
+            return Ok();
         }
         catch (DataException e)
         {

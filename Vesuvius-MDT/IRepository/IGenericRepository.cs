@@ -23,6 +23,4 @@ public interface IGenericRepository<TEntity> where TEntity : class
     void AddRange(IEnumerable<TEntity> entities);
     void Remove(TEntity entity);
     void RemoveRange(IEnumerable<TEntity> entities);
-
-   int dbsetFromSQL(FormattableString sql);
 }
