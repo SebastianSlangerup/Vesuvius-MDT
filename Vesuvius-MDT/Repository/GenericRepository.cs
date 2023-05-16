@@ -46,6 +46,13 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         _context.Set<T>().RemoveRange(entities);
     }
+
+    public int dbsetFromSQL(FormattableString sql)
+    {
+        
+        return _context.Database.sq(sql);
+    }
+
     public IIncludableQueryable<T, IEnumerable> Include(Expression<Func<T, IEnumerable>> expression)
     {
         return _context.Set<T>().Include(expression);

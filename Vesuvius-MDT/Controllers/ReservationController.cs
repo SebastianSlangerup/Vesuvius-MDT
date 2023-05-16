@@ -1,5 +1,6 @@
 using System.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Vesuvius_MDT.Data;
 using Vesuvius_MDT.Models;
 using Vesuvius_MDT.UnitOfWorkNamespace;
@@ -73,7 +74,18 @@ public class ReservationController : Controller
     {
         try
         {
-            _unitOfWork.ReservationRepository.Add(reservation);
+            
+            var ID = new SqlParameter($"ID", $"{reservation.ReservationId}");
+            var TableId = new SqlParameter($"ID", $"{reservation.TableId}");
+            var Date = new SqlParameter($"ID", $"{reservation.ReservationDateTime}");
+            var Start = new SqlParameter($"ID", $"{reservation.ResevationStart}");
+            var End = new SqlParameter($"ID", $"{reservation.ResevationEnd}");
+            var Customer = new SqlParameter($"ID", $"{reservation.CustomerRefId}");
+
+
+
+            _unitOfWork.ReservationRepository.dbsetFromSQL($"exec createResevation @{ID} ,");
+            _unitOfWork.ReservationRepository.GetById(reservation.ReservationId);
             _unitOfWork.Save();
             return Ok(reservation);
         }
