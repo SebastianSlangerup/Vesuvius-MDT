@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.IdentityModel.Tokens;
 using Vesuvius_MDT.Data;
+using Vesuvius_MDT.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,7 +37,14 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(option =>
+{
+    option.AddPolicy("Token_reguired", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireClaim("Id");
+    });
+});
 
 
 var app = builder.Build();
@@ -52,8 +60,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-app.UseAuthorization();
 
 app.MapControllers();
 

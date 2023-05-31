@@ -41,7 +41,7 @@ public class Security : Controller
                     new Claim(JwtRegisteredClaimNames.Jti,
                         Guid.NewGuid().ToString())
                 }),
-                Expires = DateTime.UtcNow.AddMinutes(5),
+                Expires = DateTime.UtcNow.AddDays(1),
                 Issuer = issuer,
                 Audience = audience,
                 SigningCredentials = new SigningCredentials
@@ -89,11 +89,10 @@ public class Security : Controller
         }
         catch(Exception e)
         { 
-            Console.WriteLine(e.ToString()); //something else happened
+            Console.WriteLine(e.ToString());
             StatusCode(StatusCodes.Status500InternalServerError);
             throw;
         }
-        //... manual validations return false if anything untoward is discovered
         return validatedToken != null;
     }
 }
