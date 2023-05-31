@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Vesuvius_MDT.Data;
 using Vesuvius_MDT.Models;
 using Vesuvius_MDT.UnitOfWorkNamespace;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
@@ -15,16 +16,19 @@ namespace Vesuvius_MDT.Controllers;
 public class Security : Controller
 {
     private IConfiguration _configuration;
-    public Security(IConfiguration configuration)
+    private readonly UnitOfWork _unitOfWork;
+    public Security(IConfiguration configuration,DataContext context)
     {
+        _unitOfWork = new UnitOfWork(context);
         _configuration = configuration;
     }
 
     [AllowAnonymous]
     [HttpPost("/security/createToken")]
-    public ActionResult<string> createToken(Login login, string username, string password)
+    public ActionResult<string> createToken(string username, string password)
     {
-        if (login.Username == username && login.Password == password)
+        var user = _unitOfWork.LoginRepository.Find(user => user.Username == username && user.Password == password).First();
+        if (user != null)
         {
             string issuer = _configuration["Jwt:Issuer"] ?? throw new SecurityException("The Issuer key set in appsetting.json is invalid");
             string audience = _configuration["Jwt:Audience"] ?? throw new SecurityException("The audience key set in appsetting.json is invalid");
@@ -36,8 +40,8 @@ public class Security : Controller
                 Subject = new ClaimsIdentity(new[]
                 {
                     new Claim("Id", Guid.NewGuid().ToString()),
-                    new Claim(JwtRegisteredClaimNames.Sub, login.Username),
-                    new Claim(JwtRegisteredClaimNames.Email, login.Username),
+                    new Claim(JwtRegisteredClaimNames.Sub, username),
+                    new Claim(JwtRegisteredClaimNames.Email, username),
                     new Claim(JwtRegisteredClaimNames.Jti,
                         Guid.NewGuid().ToString())
                 }),
@@ -50,12 +54,30 @@ public class Security : Controller
             };
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            var jwtToken = tokenHandler.WriteToken(token);
-            string? stringToken = tokenHandler.WriteToken(token);
-            return Ok(stringToken);
+            if (verifyToken(tokenHandler.WriteToken(token)) == true)
+            {
+                var jwtToken = tokenHandler.WriteToken(token);
+                string? stringToken = tokenHandler.WriteToken(token);
+                return Ok(stringToken);
+            }
+
+            return StatusCode(StatusCodes.Status500InternalServerError);
+
         }
         return StatusCode(StatusCodes.Status401Unauthorized);
     }
+
+    [AllowAnonymous]
+    [HttpPost("/security/GenerateRefreshToken")]
+    public ActionResult<string> GenerateRefreshToken(string token,string username, string password)
+    {
+        if (verifyToken(token) == true)
+        {
+            return Ok(createToken(username, password));
+        }
+        return StatusCode(StatusCodes.Status401Unauthorized);
+    }
+    
 
     [AllowAnonymous]
     [HttpPost("/security/verifyToken")]
