@@ -74,26 +74,50 @@ public class ReservationController : Controller
     // }
     [Authorize(Policy = "Token_reguired")]
     [HttpPost("/reservation/new")]
-    public ActionResult<Reservation> Add(ReservationDto reservation)
+    public ActionResult<Reservation> Add(string name, string email, string phoneNumber, int customerCount, DateTime reservationStart)
     {
         try
         {
-            var connectionString = _configuration["Db:ConnectionString"];
-            using (var sqlConnection = new SqlConnection(connectionString))
+            var customer = _unitOfWork.CustomerRepository.Find(c => c.PhoneNumber == phoneNumber).ToList();
+            int customerId;
+
+            // If a customer is found, they have the same phone number as the one that was sent.
+            if (customer.Any())
             {
-                sqlConnection.Open();
-                SqlCommand sqlCommand = new SqlCommand("relationalInsertIntoReservations", sqlConnection);
-                sqlCommand.CommandType = CommandType.StoredProcedure;
-                sqlCommand.Parameters.AddWithValue("@TableId", SqlDbType.Int).Value = reservation.TableId;
-                sqlCommand.Parameters.AddWithValue("@ReservationDateTime", SqlDbType.DateTime).Value = reservation.ReservationDateTime;
-                sqlCommand.Parameters.AddWithValue("@ResevationStart", SqlDbType.DateTime).Value = reservation.ResevationStart;
-                sqlCommand.Parameters.AddWithValue("@ResevationEnd", SqlDbType.DateTime).Value = reservation.ResevationEnd;
-                sqlCommand.Parameters.AddWithValue("@CustomerRefId", SqlDbType.Int).Value = reservation.CustomerRefId;
-                sqlCommand.Parameters.AddWithValue("@Extra", SqlDbType.NVarChar).Value = reservation.Extra;
-                sqlCommand.ExecuteNonQuery();
-                sqlConnection.Close();
+                customerId = customer.First().CustomerId;
             }
-            return Ok();
+            else
+            {
+                Customer customerInstance = new Customer
+                {
+                    Name = name,
+                    Email = email,
+                    PhoneNumber = phoneNumber
+                };
+                _unitOfWork.CustomerRepository.Add(customerInstance);
+                _unitOfWork.Save();
+                
+                // Now that the customer has been added, we need to grab their database id
+                // and put into our new reservation
+                customerId = _unitOfWork.CustomerRepository
+                    .Find(c => c.PhoneNumber == phoneNumber)
+                    .First()
+                    .CustomerId;
+            }
+
+            Reservation reservation = new Reservation
+            {
+                Customer = customer.First(),
+                CustomerRefId = customerId,
+                ReservationDateTime = DateTime.Now,
+                ResevationStart = reservationStart,
+                ResevationEnd = reservationStart.AddHours(2),
+            };
+            
+            _unitOfWork.ReservationRepository.Add(reservation);
+            _unitOfWork.Save();
+            
+            return Ok(reservation);
         }
         catch (DataException e)
         {

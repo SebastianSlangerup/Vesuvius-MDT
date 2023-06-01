@@ -14,5 +14,5 @@ public class Addon
     public decimal Price { get; set; }
 
     [JsonIgnore]
-    public List<AddonLink> AddonLinks { get; set; }
+    public List<OrderItem> OrderItems { get; set; }
 }

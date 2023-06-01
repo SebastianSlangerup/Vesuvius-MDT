@@ -52,6 +52,16 @@ public class OrderItemController : Controller
         return Ok(order_item);
     }
 
+    [HttpGet("/order-items/ordered/{orderId:int}")]
+    public ActionResult<List<OrderItem>> GetOrderedItems(int orderId)
+    {
+        var orderItems = _unitOfWork.OrderItemRepository.Find(oi => oi.OrderId == orderId && oi.Order.OrderStatusId == 1);
+
+        if (orderItems.Any() == false) return NotFound("No order items were found");
+
+        return Ok(orderItems);
+    }
+
     [HttpPut("/order-item/update/{id:int}")]
     public ActionResult<OrderItem> Update(int id, OrderItem orderRequestItem)
     {
@@ -68,7 +78,7 @@ public class OrderItemController : Controller
             Order_item.Discount = orderRequestItem.Discount;
             Order_item.Paid = orderRequestItem.Paid;
             Order_item.FoodStatus = orderRequestItem.FoodStatus;
-            Order_item.AddonLinks = orderRequestItem.AddonLinks;
+            Order_item.Addons = orderRequestItem.Addons;
             Order_item.FoodStatusId = orderRequestItem.FoodStatusId;
             Order_item.MenuItem = orderRequestItem.MenuItem;
             Order_item.MenuItemId = orderRequestItem.MenuItemId;

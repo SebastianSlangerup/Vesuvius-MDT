@@ -37,6 +37,17 @@ public class OrderController : Controller
         return Ok(order);
     }
 
+    [HttpGet("/orders/in-progress")]
+    public ActionResult<Order> GetInProgress()
+    {
+        const int inProgress = 1;
+        var orders = _unitOfWork.OrderRepository.Find(o => o.OrderStatusId == inProgress);
+
+        if (orders.Any() == false) return NotFound("No orders are currently in progress");
+
+        return Ok(orders);
+    }
+
     [HttpPost("/order/new")]
     public ActionResult<Order> Add(Order order)
     {
@@ -51,6 +62,30 @@ public class OrderController : Controller
             Console.WriteLine(e);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
+    }
+    
+    [HttpPost("/order/create-reservation-order")]
+    public ActionResult<Order> CreateReservationOrder(int reservationId, Dictionary<OrderItem, List<Addon?>> orderItems, int employeeId)
+    {
+        List<OrderItem> orderItemEnumerable = new List<OrderItem>();
+
+        foreach (var orderItemKv in orderItems)
+        {
+            OrderItem orderItem = new OrderItem
+            {
+                Addons = orderItemKv.Value.ToList(),
+
+            };
+        }
+
+        Order order = new Order
+        {
+            ReservationId = reservationId,
+            OrderItems = orderItemEnumerable,
+            ServerId = employeeId,
+        };
+
+        return Ok();
     }
 
     [HttpPut("/order/update/{id:int}")]

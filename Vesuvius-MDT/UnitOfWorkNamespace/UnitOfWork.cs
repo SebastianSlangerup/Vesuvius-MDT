@@ -15,7 +15,6 @@ public class UnitOfWork : IDisposable
 
     private GenericRepository<Order>? _orderRepository;
     private GenericRepository<Addon>? _addonRepository;
-    private GenericRepository<AddonLink>? _addonLinkRepository;
     private GenericRepository<Customer>? _customerRepository;
     private GenericRepository<Employee>? _employeeRepository;
     private GenericRepository<EmployeeType>? _employeeTypeRepository;
@@ -32,7 +31,6 @@ public class UnitOfWork : IDisposable
 
     public GenericRepository<Order> OrderRepository => _orderRepository ??= new GenericRepository<Order>(_context);
     public GenericRepository<Addon> AddonRepository => _addonRepository ??= new GenericRepository<Addon>(_context);
-    public GenericRepository<AddonLink> AddonLinkRepository => _addonLinkRepository ??= new GenericRepository<AddonLink>(_context);
     public GenericRepository<Customer> CustomerRepository => _customerRepository ??= new GenericRepository<Customer>(_context);
     public GenericRepository<Employee> EmployeeRepository => _employeeRepository ??= new GenericRepository<Employee>(_context);
     public GenericRepository<EmployeeType> EmployeeTypeRepository => _employeeTypeRepository ??= new GenericRepository<EmployeeType>(_context);
