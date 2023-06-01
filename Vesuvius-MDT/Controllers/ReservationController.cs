@@ -1,4 +1,5 @@
 using System.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Vesuvius_MDT.Data;
@@ -71,7 +72,7 @@ public class ReservationController : Controller
 
     //     return Ok(reservations);
     // }
-    
+    [Authorize(Policy = "Token_reguired")]
     [HttpPost("/reservation/new")]
     public ActionResult<Reservation> Add(ReservationDto reservation)
     {

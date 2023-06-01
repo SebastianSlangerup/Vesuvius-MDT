@@ -1,11 +1,12 @@
 using System.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Vesuvius_MDT.Data;
 using Vesuvius_MDT.Models;
 using Vesuvius_MDT.UnitOfWorkNamespace;
 
 namespace Vesuvius_MDT.Controllers;
-
+[Authorize(Policy = "Token_reguired")]
 [ApiController]
 public class OrderItemController : Controller
 {
