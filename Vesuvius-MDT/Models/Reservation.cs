@@ -6,8 +6,7 @@ public class Reservation
 {
     public int ReservationId { get; set; }
 
-    public int TableId { get; set; }
-    public Table Table { get; set; }
+    public List<Table> Tables { get; set; }
 
     public DateTime ReservationDateTime { get; set; }
 

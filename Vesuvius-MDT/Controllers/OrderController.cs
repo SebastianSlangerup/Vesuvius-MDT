@@ -65,27 +65,40 @@ public class OrderController : Controller
     }
     
     [HttpPost("/order/create-reservation-order")]
-    public ActionResult<Order> CreateReservationOrder(int reservationId, Dictionary<OrderItem, List<Addon?>> orderItems, int employeeId)
+    public ActionResult<Order> CreateReservationOrder(int reservationId, Dictionary<OrderItem, List<Addon>?> orderItems, int employeeId)
     {
         List<OrderItem> orderItemEnumerable = new List<OrderItem>();
+        
+        Order order = new Order
+        {
+            ReservationId = reservationId,
+            OrderStatusId = 1, // In progress
+            OrderItems = orderItemEnumerable,
+            ServerId = employeeId
+        };
 
         foreach (var orderItemKv in orderItems)
         {
             OrderItem orderItem = new OrderItem
             {
                 Addons = orderItemKv.Value.ToList(),
-
+                Order = order,
+                MenuItem = orderItemKv.Key.MenuItem,
+                MenuItemId = orderItemKv.Key.MenuItemId,
+                Count = orderItemKv.Key.Count,
+                Discount = orderItemKv.Key.Discount,
+                FoodStatus = orderItemKv.Key.FoodStatus,
+                FoodStatusId = orderItemKv.Key.FoodStatusId
             };
+            
+            orderItemEnumerable.Add(orderItem);
+            _unitOfWork.OrderItemRepository.Add(orderItem);
         }
 
-        Order order = new Order
-        {
-            ReservationId = reservationId,
-            OrderItems = orderItemEnumerable,
-            ServerId = employeeId,
-        };
-
-        return Ok();
+        _unitOfWork.OrderRepository.Add(order);
+        _unitOfWork.Save();
+        
+        return Ok(order);
     }
 
     [HttpPut("/order/update/{id:int}")]

@@ -74,7 +74,7 @@ public class DataContext : DbContext
             new Reservation
             {
                 ReservationId = 1,
-                TableId = 1,
+                Tables = new List<Table>(),
                 ReservationDateTime = DateTime.Now,
                 ResevationStart = DateTime.Now.AddHours(1),
                 ResevationEnd = DateTime.Now.AddHours(5),

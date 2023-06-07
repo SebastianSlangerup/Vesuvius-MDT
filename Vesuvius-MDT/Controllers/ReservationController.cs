@@ -1,9 +1,7 @@
 using System.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 using Vesuvius_MDT.Data;
-using Vesuvius_MDT.Dtos;
 using Vesuvius_MDT.Models;
 using Vesuvius_MDT.UnitOfWorkNamespace;
 
@@ -25,17 +23,17 @@ public class ReservationController : Controller
     public ActionResult<List<Reservation>> All()
     {
         var reservations = _unitOfWork.ReservationRepository.GetAll();
-        
+
         return Ok(reservations);
     }
-    
+
     [HttpGet("/reservation/{id:int}")]
     public ActionResult<Reservation> Get(int id)
     {
         var reservation = _unitOfWork.ReservationRepository.GetById(id);
 
         if (reservation is null) return NotFound();
-        
+
         _unitOfWork.Save();
         return Ok(reservation);
     }
@@ -43,7 +41,7 @@ public class ReservationController : Controller
     [HttpGet("/reservations/active")]
     public ActionResult<List<Reservation>> GetActives()
     {
-        var reservations = 
+        var reservations =
             _unitOfWork.ReservationRepository.Find(reservation => reservation.ResevationEnd < DateTime.Now);
 
         if (reservations.Any() == false) return NotFound();
@@ -74,7 +72,8 @@ public class ReservationController : Controller
     // }
     [Authorize(Policy = "Token_reguired")]
     [HttpPost("/reservation/new")]
-    public ActionResult<Reservation> Add(string name, string email, string phoneNumber, int customerCount, DateTime reservationStart)
+    public ActionResult<Reservation> Add(string name, string email, string phoneNumber, List<Table> tables,
+        DateTime reservationStart)
     {
         try
         {
@@ -96,7 +95,7 @@ public class ReservationController : Controller
                 };
                 _unitOfWork.CustomerRepository.Add(customerInstance);
                 _unitOfWork.Save();
-                
+
                 // Now that the customer has been added, we need to grab their database id
                 // and put into our new reservation
                 customerId = _unitOfWork.CustomerRepository
@@ -112,11 +111,12 @@ public class ReservationController : Controller
                 ReservationDateTime = DateTime.Now,
                 ResevationStart = reservationStart,
                 ResevationEnd = reservationStart.AddHours(2),
+                Tables = tables
             };
-            
+
             _unitOfWork.ReservationRepository.Add(reservation);
             _unitOfWork.Save();
-            
+
             return Ok(reservation);
         }
         catch (DataException e)
@@ -130,12 +130,12 @@ public class ReservationController : Controller
     public ActionResult<Reservation> Update(int id, Reservation reservationRequest)
     {
         var reservation = _unitOfWork.ReservationRepository.GetById(id);
-        
+
         if (reservation is null) return NotFound();
 
         try
         {
-            reservation.TableId = reservationRequest.TableId;
+            reservation.Tables = reservationRequest.Tables;
             reservation.CustomerRefId = reservationRequest.CustomerRefId;
             reservation.Extra = reservationRequest.Extra;
             reservation.ResevationStart = reservationRequest.ResevationStart;
@@ -164,7 +164,7 @@ public class ReservationController : Controller
         {
             _unitOfWork.ReservationRepository.Remove(reservation);
             _unitOfWork.Save();
-            
+
             return Ok();
         }
         catch (DataException e)
