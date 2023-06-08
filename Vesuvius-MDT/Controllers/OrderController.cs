@@ -2,6 +2,7 @@ using System.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Vesuvius_MDT.Data;
+using Vesuvius_MDT.Dtos;
 using Vesuvius_MDT.Models;
 using Vesuvius_MDT.UnitOfWorkNamespace;
 
@@ -37,11 +38,13 @@ public class OrderController : Controller
         return Ok(order);
     }
 
-    [HttpGet("/orders/in-progress")]
-    public ActionResult<Order> GetInProgress()
+    [HttpGet("/orders/ordered")]
+    public ActionResult<List<Order>> GetOrderedOrders()
     {
         const int inProgress = 1;
-        var orders = _unitOfWork.OrderRepository.Find(o => o.OrderStatusId == inProgress);
+        const int done = 2;
+        
+        var orders = _unitOfWork.OrderRepository.Find(o => o.OrderStatusId == inProgress || o.OrderStatusId == done);
 
         if (orders.Any() == false) return NotFound("No orders are currently in progress");
 
@@ -65,23 +68,23 @@ public class OrderController : Controller
     }
     
     [HttpPost("/order/create-reservation-order")]
-    public ActionResult<Order> CreateReservationOrder(int reservationId, Dictionary<OrderItem, List<Addon>?> orderItems, int employeeId)
+    public ActionResult<Order> CreateReservationOrder(NewOrderReservationDto dto)
     {
         List<OrderItem> orderItemEnumerable = new List<OrderItem>();
         
         Order order = new Order
         {
-            ReservationId = reservationId,
+            ReservationId = dto.ReservationId,
             OrderStatusId = 1, // In progress
             OrderItems = orderItemEnumerable,
-            ServerId = employeeId
+            ServerId = dto.EmployeeId
         };
 
-        foreach (var orderItemKv in orderItems)
+        foreach (var orderItemKv in dto.OrderItems)
         {
             OrderItem orderItem = new OrderItem
             {
-                Addons = orderItemKv.Value.ToList(),
+                Addons = orderItemKv.Value?.ToList(),
                 Order = order,
                 MenuItem = orderItemKv.Key.MenuItem,
                 MenuItemId = orderItemKv.Key.MenuItemId,
@@ -113,8 +116,29 @@ public class OrderController : Controller
             order.OrderStatusId = orderRequest.OrderStatusId;
             order.ReservationId = orderRequest.ReservationId;
             order.ServerId = orderRequest.ServerId;
-            order.CustomerId = orderRequest.CustomerId;
             
+            _unitOfWork.Save();
+
+            return Ok(order);
+        }
+        catch (DataException e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    [HttpPut("/order/update-status/{id:int}")]
+    public ActionResult<Order> UpdateOrderStatus(int id, int newStatusId)
+    {
+        var order = _unitOfWork.OrderRepository.GetById(id);
+
+        if (order is null) return NotFound("No order was found");
+
+        try
+        {
+            order.OrderStatusId = newStatusId;
+
             _unitOfWork.Save();
 
             return Ok(order);

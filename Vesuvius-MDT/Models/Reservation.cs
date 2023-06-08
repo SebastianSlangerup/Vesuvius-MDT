@@ -19,5 +19,5 @@ public class Reservation
     public Customer Customer { get; set; }
 
     [Column(TypeName = "nvarchar(255)")]
-    public string Extra { get; set; }
+    public string? Extra { get; set; }
 }

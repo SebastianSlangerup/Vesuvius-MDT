@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Vesuvius_MDT.Data;
 
@@ -11,9 +12,11 @@ using Vesuvius_MDT.Data;
 namespace Vesuvius_MDT.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230608090816_MakeExtraFieldNullable")]
+    partial class MakeExtraFieldNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -356,7 +359,7 @@ namespace Vesuvius_MDT.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
 
-                    b.Property<int?>("CustomerId")
+                    b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
                     b.Property<int>("OrderStatusId")
@@ -387,6 +390,7 @@ namespace Vesuvius_MDT.Migrations
                         new
                         {
                             OrderId = 1,
+                            CustomerId = 1,
                             OrderStatusId = 1,
                             ReservationId = 1,
                             ServerId = 1,
@@ -511,9 +515,9 @@ namespace Vesuvius_MDT.Migrations
                             ReservationId = 1,
                             CustomerRefId = 1,
                             Extra = "Plads til handikap, tak :)",
-                            ReservationDateTime = new DateTime(2023, 6, 8, 11, 22, 40, 992, DateTimeKind.Local).AddTicks(4320),
-                            ResevationEnd = new DateTime(2023, 6, 8, 16, 22, 40, 992, DateTimeKind.Local).AddTicks(4370),
-                            ResevationStart = new DateTime(2023, 6, 8, 12, 22, 40, 992, DateTimeKind.Local).AddTicks(4370)
+                            ReservationDateTime = new DateTime(2023, 6, 8, 11, 8, 16, 306, DateTimeKind.Local).AddTicks(4360),
+                            ResevationEnd = new DateTime(2023, 6, 8, 16, 8, 16, 306, DateTimeKind.Local).AddTicks(4410),
+                            ResevationStart = new DateTime(2023, 6, 8, 12, 8, 16, 306, DateTimeKind.Local).AddTicks(4400)
                         });
                 });
 
@@ -611,9 +615,11 @@ namespace Vesuvius_MDT.Migrations
 
             modelBuilder.Entity("Vesuvius_MDT.Models.Order", b =>
                 {
-                    b.HasOne("Vesuvius_MDT.Models.Customer", null)
+                    b.HasOne("Vesuvius_MDT.Models.Customer", "Customer")
                         .WithMany("Orders")
-                        .HasForeignKey("CustomerId");
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Vesuvius_MDT.Models.OrderStatus", "OrderStatus")
                         .WithMany("Orders")
@@ -631,6 +637,8 @@ namespace Vesuvius_MDT.Migrations
                         .HasForeignKey("ServerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Customer");
 
                     b.Navigation("OrderStatus");
 

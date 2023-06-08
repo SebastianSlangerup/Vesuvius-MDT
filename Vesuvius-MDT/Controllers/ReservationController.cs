@@ -2,6 +2,7 @@ using System.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Vesuvius_MDT.Data;
+using Vesuvius_MDT.Dtos;
 using Vesuvius_MDT.Models;
 using Vesuvius_MDT.UnitOfWorkNamespace;
 
@@ -72,12 +73,11 @@ public class ReservationController : Controller
     // }
     [Authorize(Policy = "Token_reguired")]
     [HttpPost("/reservation/new")]
-    public ActionResult<Reservation> Add(string name, string email, string phoneNumber, List<Table> tables,
-        DateTime reservationStart)
+    public ActionResult<Reservation> Add(NewReservationDto dto)
     {
         try
         {
-            var customer = _unitOfWork.CustomerRepository.Find(c => c.PhoneNumber == phoneNumber).ToList();
+            var customer = _unitOfWork.CustomerRepository.Find(c => c.PhoneNumber == dto.PhoneNumber).ToList();
             int customerId;
 
             // If a customer is found, they have the same phone number as the one that was sent.
@@ -89,9 +89,9 @@ public class ReservationController : Controller
             {
                 Customer customerInstance = new Customer
                 {
-                    Name = name,
-                    Email = email,
-                    PhoneNumber = phoneNumber
+                    Name = dto.Name,
+                    Email = dto.Email,
+                    PhoneNumber = dto.PhoneNumber
                 };
                 _unitOfWork.CustomerRepository.Add(customerInstance);
                 _unitOfWork.Save();
@@ -99,7 +99,7 @@ public class ReservationController : Controller
                 // Now that the customer has been added, we need to grab their database id
                 // and put into our new reservation
                 customerId = _unitOfWork.CustomerRepository
-                    .Find(c => c.PhoneNumber == phoneNumber)
+                    .Find(c => c.PhoneNumber == dto.PhoneNumber)
                     .First()
                     .CustomerId;
             }
@@ -109,9 +109,9 @@ public class ReservationController : Controller
                 Customer = customer.First(),
                 CustomerRefId = customerId,
                 ReservationDateTime = DateTime.Now,
-                ResevationStart = reservationStart,
-                ResevationEnd = reservationStart.AddHours(2),
-                Tables = tables
+                ResevationStart = dto.ReservationStart,
+                ResevationEnd = dto.ReservationStart.AddHours(2),
+                Tables = dto.Tables
             };
 
             _unitOfWork.ReservationRepository.Add(reservation);

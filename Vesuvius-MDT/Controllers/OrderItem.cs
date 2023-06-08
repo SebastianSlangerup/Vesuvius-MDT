@@ -25,7 +25,7 @@ public class OrderItemController : Controller
         return Ok(orderItems);
     }
 
-    [HttpPost("order-items/add")]
+    [HttpPost("order-items/new")]
     public ActionResult<OrderItem> Add(OrderItem orderItem)
     {
         try
