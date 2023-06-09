@@ -7,7 +7,7 @@ using Vesuvius_MDT.UnitOfWorkNamespace;
 
 namespace Vesuvius_MDT.Controllers;
 
-[Authorize(Policy = "Token_reguired")]
+
 [ApiController]
 public class LoginController : Controller
 {
@@ -18,6 +18,14 @@ public class LoginController : Controller
         _unitOfWork = new UnitOfWork(context);
     }
 
+    [HttpGet("/login/{username}/{password}")]
+    public ActionResult Login(string username, string password)
+    {
+        var user = _unitOfWork.LoginRepository.Find(user => user.Username == username && user.Password == password).First();
+        return Ok(user);
+    }
+
+    [Authorize(Policy = "Token_reguired")]
     [HttpGet("/logins")]
     public ActionResult<List<Login>> All()
     {
@@ -25,7 +33,7 @@ public class LoginController : Controller
         
         return Ok(logins);
     }
-    
+    [Authorize(Policy = "Token_reguired")]
     [HttpGet("/login/{id:int}")]
     public ActionResult<Login> Get(int id)
     {
@@ -36,7 +44,7 @@ public class LoginController : Controller
         _unitOfWork.Save();
         return Ok(login);
     }
-
+    [Authorize(Policy = "Token_reguired")]
     [HttpPost("/login/new")]
     public ActionResult<Login> Add(Login login)
     {
@@ -52,7 +60,7 @@ public class LoginController : Controller
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
-
+    [Authorize(Policy = "Token_reguired")]
     [HttpPut("/login/update/{id:int}")]
     public ActionResult<Login> Update(int id, Login loginRequest)
     {
