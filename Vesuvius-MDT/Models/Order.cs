@@ -11,11 +11,6 @@ public class Order
 
     [JsonIgnore] public OrderStatus OrderStatus { get; set; } = null!;
     
-    public int CustomerId { get; set; }
-    
-    [JsonIgnore]
-    public Customer Customer { get; set; }
-    
     public int ServerId { get; set; }
     
     [JsonIgnore]

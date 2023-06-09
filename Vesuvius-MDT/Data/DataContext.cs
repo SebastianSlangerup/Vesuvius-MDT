@@ -74,7 +74,7 @@ public class DataContext : DbContext
             new Reservation
             {
                 ReservationId = 1,
-                TableId = 1,
+                Tables = new List<Table>(),
                 ReservationDateTime = DateTime.Now,
                 ResevationStart = DateTime.Now.AddHours(1),
                 ResevationEnd = DateTime.Now.AddHours(5),
@@ -101,7 +101,7 @@ public class DataContext : DbContext
             }
         );
         modelBuilder.Entity<Order>().HasData(
-            new Order { OrderId = 1, OrderStatusId = 1, CustomerId = 1, ServerId = 1, ReservationId = 1, Tips = 2.50m }
+            new Order { OrderId = 1, OrderStatusId = 1, ServerId = 1, ReservationId = 1, Tips = 2.50m }
         );
         modelBuilder.Entity<OrderItem>().HasData(
             new OrderItem { OrderItemId = 1, OrderId = 1, MenuItemId = 1, FoodStatusId = 1, Count = 2, Paid = 140.99m }
