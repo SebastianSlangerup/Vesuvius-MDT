@@ -21,8 +21,17 @@ public class LoginController : Controller
     [HttpGet("/login/{username}/{password}")]
     public ActionResult Login(string username, string password)
     {
-        var user = _unitOfWork.LoginRepository.Find(user => user.Username == username && user.Password == password).First();
-        return Ok(user);
+        try
+        {
+            var user = _unitOfWork.LoginRepository.Find(user => user.Username == username && user.Password == password).First();
+            return Ok(user);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return StatusCode(StatusCodes.Status401Unauthorized);
+        }
+       
     }
 
     [Authorize(Policy = "Token_reguired")]

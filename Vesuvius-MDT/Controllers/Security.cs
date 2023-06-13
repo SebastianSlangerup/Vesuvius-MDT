@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Vesuvius_MDT.Data;
+using Vesuvius_MDT.Dtos;
 using Vesuvius_MDT.Models;
 using Vesuvius_MDT.UnitOfWorkNamespace;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
@@ -25,10 +26,10 @@ public class Security : Controller
 
     [AllowAnonymous]
     [HttpPost("/security/createToken")]
-    public ActionResult<string> createToken(string username, string password)
+    public ActionResult<string> createToken([FromBody]User User)
     {
-        var user = _unitOfWork.LoginRepository.Find(user => user.Username == username && user.Password == password).First();
-        if (user != null)
+        var _user = _unitOfWork.LoginRepository.Find(user => user.Username == User.Username && User.Password == user.Password).FirstOrDefault();
+        if (_user != null)
         {
             string issuer = _configuration["Jwt:Issuer"] ?? throw new SecurityException("The Issuer key set in appsetting.json is invalid");
             string audience = _configuration["Jwt:Audience"] ?? throw new SecurityException("The audience key set in appsetting.json is invalid");
@@ -40,8 +41,8 @@ public class Security : Controller
                 Subject = new ClaimsIdentity(new[]
                 {
                     new Claim("Id", Guid.NewGuid().ToString()),
-                    new Claim(JwtRegisteredClaimNames.Sub, username),
-                    new Claim(JwtRegisteredClaimNames.Email, username),
+                    new Claim(JwtRegisteredClaimNames.Sub, User.Username),
+                    new Claim(JwtRegisteredClaimNames.Email, User.Username),
                     new Claim(JwtRegisteredClaimNames.Jti,
                         Guid.NewGuid().ToString())
                 }),
@@ -69,11 +70,11 @@ public class Security : Controller
 
     [AllowAnonymous]
     [HttpPost("/security/GenerateRefreshToken")]
-    public ActionResult<string> GenerateRefreshToken(string token,string username, string password)
+    public ActionResult<string> GenerateRefreshToken(User user)
     {
-        if (verifyToken(token) == true)
+        if (verifyToken(user.Token) == true)
         {
-            return Ok(createToken(username, password));
+            return Ok(createToken(user));
         }
         return StatusCode(StatusCodes.Status401Unauthorized);
     }
